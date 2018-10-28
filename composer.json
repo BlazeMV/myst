@@ -1,0 +1,25 @@
+{
+	"name": "blaze/myst",
+	"description": "Telegram Bots PHP SDK",
+	"type": "library",
+	"authors": [
+		{
+			"name": "Adam Dawood",
+			"email": "ad.adamdavid72@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=7.0",
+		"guzzlehttp/guzzle": "~6.2",
+		"illuminate/support": "~5.5",
+		"ext-json": "*"
+	},
+	"suggest": {
+	
+	},
+	"autoload": {
+		"psr-4": {
+			"Blaze\\Myst\\" : "src/"
+		}
+	}
+}
