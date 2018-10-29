@@ -13,18 +13,34 @@ return [
 			'cbq_param_seperator'           => ' ',
 			'unknown_command_reply_help'    => false,
 			'engages_in'                    => [
-				'private',
-				'group',
-				'supergroup',
-				'channel'
+				'private'                       => true,
+				'group'                         => true,
+				'supergroup'                    => true,
+				'channel'                       => true,
 			],
+            'process'                       => [
+                'commands'                      => true,
+                'callback_queries'              => true,
+                'text'                          => true,
+                'hashtags'                      => true,
+                'mentions'                      => true,
+            ],
 			'commands'                      => [
 			
 			],
 			'callback_queries'              => [
 			
 			],
-			'conversations'              => [
+			'conversations'                 => [
+			
+			],
+			'texts'                      => [
+			
+			],
+			'hashtags'                      => [
+			
+			],
+			'mentions'                      => [
 			
 			]
 		]

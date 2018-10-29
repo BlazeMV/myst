@@ -14,7 +14,7 @@ use Blaze\Myst\Api\Response;
  * Used to make requests to APIs and return responses.
  *
  * Class HttpService
- * @package Msd\Citadel\Core\Services
+ * @package Blaze\Myst\Services
  */
 class HttpService
 {

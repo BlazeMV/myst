@@ -2,6 +2,9 @@
 
 namespace Blaze\Myst\Api;
 
+use Blaze\Myst\Api\Objects\Collection;
+use Blaze\Myst\Api\Objects\Error;
+use Blaze\Myst\Api\Objects\Raw;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Blaze\Myst\Exceptions\UnexpectedObjectTypeException;
@@ -9,7 +12,7 @@ use Blaze\Myst\Exceptions\UnexpectedObjectTypeException;
 /**
  * Represents a Response from an Api request
  * Class Response
- * @package Msd\Citadel
+ * @package Blaze\Myst\Api\Response
  */
 class Response
 {
@@ -73,10 +76,10 @@ class Response
 	 */
 	public function castToObject($class, $multiple_objects = false)
 	{
-		/*if ($this->isOk()) {
-			
-			if (!is_array($this->getResponseBody()) && $class !== StringObject::class)
-				throw new UnexpectedObjectTypeException("Expected an array, but received a string from api.");
+		if ($this->isOk()) {
+		 
+			if (!is_array($this->getResponseBody()))
+			    return new Raw($this->getResponseBody());
 			
 			if ($multiple_objects){
 				$objects = [];
@@ -98,7 +101,7 @@ class Response
 				'message' =>$this->getMessage(),
 				'trace' => $this->getTrace(),
 			]);
-		}*/
+		}
 	}
 	
 	/**

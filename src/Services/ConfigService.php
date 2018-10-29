@@ -33,29 +33,49 @@ class ConfigService
 			'cbq_param_seperator',
 			'unknown_command_reply_help',
 			'engages_in',
+			'engages_in.private',
+			'engages_in.group',
+			'engages_in.supergroup',
+			'engages_in.channel',
 			'commands',
 			'callback_queries',
-			'messages'
+			'texts',
+			'process',
+			'process.commands',
+			'process.callback_queries',
+			'process.text',
+			'process.hashtags',
+			'process.mentions',
 		];
 		$string = [
 			'username',
 			'token',
 			'commands_param_seperator',
-			'cbq_param_seperator'
+			'cbq_param_seperator',
 		];
 		$boolean = [
 			'async',
 			'process_edited_messages',
-			'unknown_command_reply_help'
+			'unknown_command_reply_help',
+            'engages_in.private',
+            'engages_in.group',
+            'engages_in.supergroup',
+            'engages_in.channel',
+            'process.commands',
+            'process.callback_queries',
+            'process.text',
+            'process.hashtags',
+            'process.mentions',
 		];
 		$array = [
 			'engages_in',
 			'commands',
 			'callback_queries',
-			'messages'
+			'texts',
+			'process',
 		];
 		$regex = [
-			'token' => '/^[0-9]{9}:[a-zA-Z0-9-*_*]{35}$/'
+			'token' => '/^[0-9]{9}:[a-zA-Z0-9-*_*]{35}$/',
 		];
 		
 		foreach ($required as $item) {
@@ -65,33 +85,33 @@ class ConfigService
 		}
 		
 		foreach ($string as $item) {
-			if (!isset($config[$item])) continue;
+			if (!array_has($config, $item)) continue;
 			
-			if (!is_string($config[$item]) || strlen($config[$item]) < 1) {
+			if (!is_string(array_get($config, $item)) || strlen(array_get($config, $item)) < 1) {
 				throw new ConfigurationException("$item is expected to be a string.");
 			}
 		}
 		
 		foreach ($boolean as $item) {
-			if (!isset($config[$item])) continue;
+			if (!array_has($config, $item)) continue;
 			
-			if (!is_bool($config[$item])) {
+			if (!is_bool(array_get($config, $item))) {
 				throw new ConfigurationException("$item is expected to be a boolean true or false.");
 			}
 		}
 		
 		foreach ($array as $item) {
-			if (!isset($config[$item])) continue;
+			if (!array_has($config, $item)) continue;
 			
-			if (!is_array($config[$item])) {
+			if (!is_array(array_get($config, $item))) {
 				throw new ConfigurationException("$item is expected to be an array.");
 			}
 		}
 		
 		foreach ($regex as $item => $pattern) {
-			if (!isset($config[$item])) continue;
+			if (!array_has($config, $item)) continue;
 			
-			if (preg_match($pattern, $config[$item]) !== 1) {
+			if (preg_match($pattern, array_get($config, $item)) !== 1) {
 				throw new ConfigurationException("$item does not match the required pattern");
 			}
 		}
