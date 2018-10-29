@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Telegram\Conversations;
+
+use Blaze\Blazing\Api\Request\SendMessage;
+use Blaze\Blazing\Controllers\ConversationController;
+
+class DummyClassNameConversation extends ConversationController
+{
+
+    protected $name = "DummyName";
+
+    protected $description = "";
+
+    protected $engage = ['private', 'group', 'supergroup', 'channel'];
+
+    public function handle($step)
+    {
+        switch ($step){
+            case 1:
+                $result = $this->replyWithMessage(SendMessage::make()->text('Reply to this.'));
+                $this->saveUpdate()->setReplyMessageId($result->getMessageId())->nextStep();
+                break;
+            case 2:
+                $result = $this->replyWithMessage(SendMessage::make()->text('We are Done.'));
+                $updates = $this->getStepUpdates();
+
+                //do something with all updates
+                // updates will be grouped by step.
+                //eg: $updates = [
+                //                  0 => [
+                //                      update 1,
+                //                      update 2
+                //                  ],
+                //                  1 => [
+                //                      update 3
+                //                  ]
+                //              ];
+                //  foreach($updates as $steps){
+                //
+                //      foreach($steps as $update){
+                //
+                //      }
+                //  }
+                //
+
+                $this->terminate();
+                break;
+            default:
+                $result = $this->replyWithMessage(SendMessage::make()->text('Error.'));
+        }
+        return $step;
+    }
+}

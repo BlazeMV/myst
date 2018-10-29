@@ -15,6 +15,11 @@ class ConfigService
 	{
 		return 'https://api.telegram.org/bot';
 	}
+    
+    public static function getConversationCacheKey()
+    {
+        return 'myst_convo';
+	}
 	
 	/**
 	 * validates a bot config array

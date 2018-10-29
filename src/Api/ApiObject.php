@@ -79,7 +79,8 @@ class ApiObject extends BaseObject
 	private function globalPropertyAliases() : array
 	{
 		return [
-		
+		    'message_id'    => 'id',
+            'chat_id'       => 'id',
 		];
 	}
 	

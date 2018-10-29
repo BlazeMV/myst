@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Telegram\Commands;
+
+use Blaze\Blazing\Api\Request\SendMessage;
+use Blaze\Blazing\Controllers\CommandsController;
+
+class DummyClassNameCommand extends CommandsController
+{
+
+    protected $name = "DummyName";
+
+    protected $description = "";
+
+    protected $position = 0;
+
+    protected $alone = false;
+
+    protected $engage = ['private', 'group', 'supergroup', 'channel'];
+
+    protected $caseSensitive = false;
+
+    public function handle($arguments)
+    {
+        $result = $this->replyWithMessage(SendMessage::make()->text('hello'));
+    }
+}

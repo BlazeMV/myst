@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Telegram\CallbackQueries;
+
+use Blaze\Blazing\Api\Request\AnswerCallbackQuery;
+use Blaze\Blazing\Controllers\CallbackQueriesController;
+
+class DummyClassNameCallbackQuery extends CallbackQueriesController
+{
+
+    protected $name = "DummyName";
+
+    protected $description = "";
+
+    protected $alone = false;
+
+    protected $engage = ['private', 'group', 'supergroup', 'channel'];
+
+    public function handle($arguments)
+    {
+        $result = $this->answer(AnswerCallbackQuery::make()->text("hello"));
+    }
+}
