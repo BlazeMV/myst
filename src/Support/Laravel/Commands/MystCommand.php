@@ -1,18 +1,17 @@
 <?php
 
-namespace Blaze\Blazing\Laravel\Commands;
+namespace Blaze\Myst\Support\Laravel\Commands;
 
-use function GuzzleHttp\Psr7\str;
 use Illuminate\Console\Command;
 
-class TelegramCommand extends Command
+class MystCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'make:blazing {what} {name}';
+    protected $signature = 'myst:make {controller} {name}';
 
     /**
      * The console command description.
@@ -38,7 +37,7 @@ class TelegramCommand extends Command
      */
     public function handle()
     {
-        switch ($this->argument('what')){
+        switch ($this->argument('controller')){
             case 'command':
             case 'cmd':
                 $this->makeCommand($this->argument('name'));

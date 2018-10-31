@@ -1,14 +1,14 @@
 <?php
 
-namespace Blaze\Myst\Api\Request;
+namespace Blaze\Myst\Api\Requests;
 
-use Blaze\Myst\Api\Objects\Chat;
+use Blaze\Myst\Api\Objects\Raw;
 
-class GetChat extends BaseRequest
+class GetChatMembersCount extends BaseRequest
 {
     protected function responseObject()
     {
-        return Chat::class;
+        return Raw::class;
     }
     
     

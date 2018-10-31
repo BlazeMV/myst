@@ -1,23 +1,30 @@
 <?php
 
-namespace Blaze\Myst\Api\Request;
+namespace Blaze\Myst\Api\Requests;
 
-use Blaze\Myst\Api\Objects\Raw;
+use Blaze\Myst\Api\Objects\Message;
 
-class PinChatMessage extends BaseRequest
+class ForwardMessage extends BaseRequest
 {
     protected function responseObject()
     {
-        return Raw::class;
+        return Message::class;
     }
     
-    public function chat($chat_id)
+    
+    public function from($chat_id)
+    {
+        $this->params['from_chat_id'] = $chat_id;
+        return $this;
+    }
+
+    public function to($chat_id)
     {
         $this->params['chat_id'] = $chat_id;
         return $this;
     }
 
-    public function messageId($message_id)
+    public function id($message_id)
     {
         $this->params['message_id'] = $message_id;
         return $this;

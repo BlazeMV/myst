@@ -1,7 +1,9 @@
 <?php
 
-namespace Blaze\Myst\Api\Request;
+namespace Blaze\Myst\Api\Requests;
 
+use Blaze\Myst\Api\Objects\Collection;
+use Blaze\Myst\Api\Response;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Services\ConfigService;
 use Blaze\Myst\Services\HttpService;
@@ -25,7 +27,7 @@ abstract class BaseRequest
 	 * whether or not to make an async request to api
 	 * @var bool $async
 	*/
-	protected $async = [];
+	protected $async = false;
 	
 	/**
 	 * HttpService that will be used to make the request
@@ -93,14 +95,19 @@ abstract class BaseRequest
 	public function setBot(Bot $bot)
 	{
 		$this->bot = $bot;
+		
+		return $this;
 	}
 	
 	public function send()
 	{
 		$this->prepareRequest();
-		$response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->bot->getConfig('token') . '/', $this->params);
+		$response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->bot->getConfig('token') . '/', $this->params, $this->getAsync());
 		
-		return $response->castToObject($this->responseObject(), $this->multipleResponseObjects());
+		if ($response instanceof Response)
+		    return $response->castToObject($this->responseObject(), $this->multipleResponseObjects());
+		
+		return new Collection([]);
 	}
 	
 	private function prepareRequest()

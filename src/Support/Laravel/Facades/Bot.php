@@ -4,6 +4,10 @@ namespace Blaze\Myst\Support\Laravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * @method static \Blaze\Myst\Api\Objects\Update handleUpdate(callable $pre_function = null)
+ * @method static \Blaze\Myst\Api\Objects\Update getWebhookUpdate()
+*/
 class Bot extends Facade
 {
 	/**

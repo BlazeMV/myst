@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaze\Myst\Api\Request;
+namespace Blaze\Myst\Api\Requests;
 
 use Blaze\Myst\Api\Objects\Message;
 use Myst\Markup\ForceReply;
@@ -58,7 +58,7 @@ class SendMessage extends BaseRequest
 	
 	public function markup($markup){
 		if (!$markup instanceof Keyboard && !$markup instanceof ForceReply)
-			throw new \InvalidArgumentException('$markup should be an instance of either Blaze\Myst\Api\Request\Markup\Keyboard or Blaze\Blazing\Api\Request\Markup\ForceReply.');
+			throw new \InvalidArgumentException('$markup should be an instance of either Blaze\Myst\Api\Requests\Markup\Keyboard or Blaze\Blazing\Api\Requests\Markup\ForceReply.');
 		
 		$this->params['reply_markup'] = $markup;
 		return $this;

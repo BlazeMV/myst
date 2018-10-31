@@ -21,5 +21,12 @@
 		"psr-4": {
 			"Blaze\\Myst\\" : "src/"
 		}
-	}
+	},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Blaze\\Myst\\Support\\Laravel\\MystServiceProvider"
+            ]
+        }
+    }
 }

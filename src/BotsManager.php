@@ -69,7 +69,7 @@ class BotsManager {
 		$name = $name ?: $this->getDefaultBotName();
 		
 		$bots = $this->getConfigValue('bots');
-		if (!isset($bots[$name])) throw new ConfigurationException("Bot: $name not configured");
+		if (!isset($bots[$name])) throw new ConfigurationException("$name bot not configured in the config file.");
 		
 		$config = $bots[$name];
 		$config['name'] = $name;

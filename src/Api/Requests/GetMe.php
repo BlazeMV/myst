@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaze\Myst\Api\Request;
+namespace Blaze\Myst\Api\Requests;
 
 use Blaze\Myst\Api\Objects\User;
 

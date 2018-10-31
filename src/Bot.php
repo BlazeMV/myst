@@ -3,7 +3,7 @@
 namespace Blaze\Myst;
 
 use Blaze\Myst\Api\Objects\Update;
-use Blaze\Myst\Api\Request\BaseRequest;
+use Blaze\Myst\Api\Requests\BaseRequest;
 use Blaze\Myst\Exceptions\ConfigurationException;
 use Blaze\Myst\Services\ConfigService;
 use Blaze\Myst\Traits\AvailableMethods;
@@ -19,13 +19,14 @@ class Bot
 	 * @var array $config
 	*/
 	protected $config = [];
-	
-	/**
-	 * Bot constructor.
-	 *
-	 * @param array $config
-	 * @throws ConfigurationException
-	 */
+    
+    /**
+     * Bot constructor.
+     *
+     * @param array $config
+     * @throws ConfigurationException
+     * @throws Exceptions\CommandStackException
+     */
 	public function __construct(array $config)
 	{
 		ConfigService::validateBotConfig($config);
@@ -43,7 +44,7 @@ class Bot
 	 */
 	public function getConfig($key)
 	{
-		if (isset($this->config[$key])) return $this->config[$key];
+		if (array_has($this->config, $key)) return array_get($this->config, $key);
 		
 		throw new ConfigurationException("Unknown config key $key");
 	}
@@ -62,7 +63,7 @@ class Bot
 	public function getWebhookUpdate()
 	{
 		$body = json_decode(file_get_contents('php://input'), true);
-		return new Update($body, $this);
+		return (new Update($body))->setBot($this);
 	}
 	
 	public function sendRequest(BaseRequest $request)

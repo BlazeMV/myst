@@ -23,15 +23,15 @@ abstract class BaseController
     
     protected $description = "";
     
-    protected $position = 0;
+    protected $position = '*';
     
-    protected $alone = true;
+    protected $only_command = true;
     
-    protected $engage = [
-        'private',
-        'group',
-        'supergroup',
-        'channel'
+    protected $engages_in = [
+        'private'       => true,
+        'group'         => true,
+        'supergroup'    => true,
+        'channel'       => true
     ];
     
     protected $case_sensitive = false;
@@ -54,13 +54,41 @@ abstract class BaseController
     /**
      * @return Bot
      */
-    public function getBot()
+    public function getBot(): Bot
     {
         return $this->bot;
     }
     
     /**
-     * @return string
+     * @param Bot $bot
+     * @return BaseController
+     */
+    public function setBot(Bot $bot): BaseController
+    {
+        $this->bot = $bot;
+        return $this;
+    }
+    
+    /**
+     * @return Update
+     */
+    public function getUpdate(): Update
+    {
+        return $this->update;
+    }
+    
+    /**
+     * @param Update $update
+     * @return BaseController
+     */
+    public function setUpdate(Update $update): BaseController
+    {
+        $this->update = $update;
+        return $this;
+    }
+    
+    /**
+     * @return mixed
      */
     public function getName()
     {
@@ -68,59 +96,103 @@ abstract class BaseController
     }
     
     /**
-     * @param string $name
+     * @param mixed $name
+     * @return BaseController
      */
-    public function setName(string $name): void
+    public function setName($name)
     {
         $this->name = $name;
+        return $this;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getAliases(): array
+    {
+        return $this->aliases;
+    }
+    
+    /**
+     * @param array $aliases
+     * @return BaseController
+     */
+    public function setAliases(array $aliases): BaseController
+    {
+        $this->aliases = $aliases;
+        return $this;
     }
     
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
     
     /**
      * @param string $description
+     * @return BaseController
      */
-    public function setDescription(string $description): void
+    public function setDescription(string $description): BaseController
     {
         $this->description = $description;
+        return $this;
     }
     
     /**
-     * @return Update
+     * @return string
      */
-    public function getUpdate()
-    {
-        return $this->update;
-    }
-    
-    /**
-     * @return string|integer
-     */
-    public function getPosition()
+    public function getPosition(): string
     {
         return $this->position;
     }
     
     /**
-     * @return bool
+     * @param string $position
+     * @return BaseController
      */
-    public function onlyWhenAlone(): bool
+    public function setPosition(string $position): BaseController
     {
-        return $this->alone;
+        $this->position = $position;
+        return $this;
     }
     
     /**
      * @return bool
      */
-    public function engagesIn($chat_type): bool
+    public function isOnlyCommand(): bool
     {
-        return array_has($this->engage, $chat_type);
+        return $this->only_command;
+    }
+    
+    /**
+     * @param bool $only_command
+     * @return BaseController
+     */
+    public function setOnlyCommand(bool $only_command): BaseController
+    {
+        $this->only_command = $only_command;
+        return $this;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getEngagesIn(): array
+    {
+        return $this->engages_in;
+    }
+    
+    /**
+     * @param array $engages_in
+     * @return BaseController
+     */
+    public function setEngagesIn(array $engages_in): BaseController
+    {
+        $this->engages_in = $engages_in;
+        return $this;
     }
     
     /**
@@ -130,4 +202,16 @@ abstract class BaseController
     {
         return $this->case_sensitive;
     }
+    
+    /**
+     * @param bool $case_sensitive
+     * @return BaseController
+     */
+    public function setCaseSensitive(bool $case_sensitive): BaseController
+    {
+        $this->case_sensitive = $case_sensitive;
+        return $this;
+    }
+    
+    
 }

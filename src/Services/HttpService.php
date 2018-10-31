@@ -9,6 +9,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use Blaze\Myst\Exceptions\HttpException;
 use Blaze\Myst\Api\Response;
+use GuzzleHttp\Promise\PromiseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Used to make requests to APIs and return responses.
@@ -22,6 +24,9 @@ class HttpService
 	 * @var Client $client
 	 */
 	private $client;
+    
+    /** @var PromiseInterface[] Holds promises. */
+    private static $promises = [];
 	
 	/**
 	 * Headers to be set on every request
@@ -42,41 +47,52 @@ class HttpService
 	{
 		$this->client = $client;
 	}
-	
-	/**
-	 * @param string $url
-	 * @param array $data
-	 * @return Response
-	 * @throws HttpException
-	 */
-	public function post($url, array $data)
+    
+    /**
+     * @param string $url
+     * @param array $data
+     * @param bool $async
+     * @return Response
+     * @throws HttpException
+     */
+	public function post($url, array $data, $async = false)
 	{
-		return $this->makeRequest('POST', $url, $data);
+		return $this->makeRequest('POST', $url, $data, $async);
 	}
-	
-	/**
-	 * @param string $method
-	 * @param string $url
-	 * @param array|null $body
-	 * @return Response
-	 * @throws HttpException
-	 */
-	private function makeRequest($method, $url, array $body = null)
+    
+    /**
+     * @param string $method
+     * @param string $url
+     * @param array|null $body
+     * @param bool $async
+     * @return Response
+     * @throws HttpException
+     */
+	private function makeRequest($method, $url, array $body = null, $async = false)
 	{
-		try {
-			$response = $this->client->request($method, $url, [
-				'json' => $body,
-				'headers' => $this->headers
-			]);
-			return new Response($response);
-			
-		} catch (GuzzleException $exception) {
-			if ($exception instanceof ClientException || $exception instanceof RequestException || $exception instanceof ServerException) {
-				return new Response($exception->getResponse(), $exception->getRequest(), $exception->getTrace());
-			} else {
-				throw new HttpException("Unknown Exception thrown from GuzzleHttp\Client.", 0, $exception);
-			}
-		}
+		if (true) {
+            $promise[] = $this->client->requestAsync($method, $url, [
+                'json' => $body,
+                'headers' => $this->headers
+            ]);
+        } else {
+            try {
+                $response = $this->client->request($method, $url, [
+                    'json' => $body,
+                    'headers' => $this->headers
+                ]);
+//                return null;
+                return new Response($response);
+
+            } catch (GuzzleException $exception) {
+                if ($exception instanceof ClientException || $exception instanceof RequestException || $exception instanceof ServerException) {
+                    return new Response($exception->getResponse(), $exception->getRequest(), $exception->getTrace());
+                } else {
+                    throw new HttpException("Unknown Exception thrown from GuzzleHttp\Client.", 0, $exception);
+                }
+            }
+        }
+		
 	}
 	
 	/**

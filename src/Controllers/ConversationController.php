@@ -2,7 +2,7 @@
 
 namespace Blaze\Myst\Controllers;
 
-use Blaze\Myst\Api\Request\SendMessage;
+use Blaze\Myst\Api\Requests\SendMessage;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Api\Objects\Update;
 use Blaze\Myst\Exceptions\MystException;

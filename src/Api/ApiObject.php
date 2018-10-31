@@ -101,6 +101,8 @@ class ApiObject extends BaseObject
 		$multiple_relations = collect($this->multipleObjectRelations());
 		
 		foreach ($data as $key => $item) {
+		    
+		    if (is_string($item)) $item = trim($item);
 			
 			if ($item === null) {
 				

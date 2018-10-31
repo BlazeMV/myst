@@ -3,6 +3,7 @@
 namespace Blaze\Myst\Support\Laravel;
 
 use Blaze\Myst\BotsManager;
+use Blaze\Myst\Support\Laravel\Commands\MystCommand;
 use Illuminate\Support\ServiceProvider;
 
 class MystServiceProvider extends ServiceProvider
@@ -25,7 +26,7 @@ class MystServiceProvider extends ServiceProvider
 	
 	public function registerCommands(){
 		if ($this->app->runningInConsole()) {
-//			$this->commands([Controller::class]);
+			$this->commands([MystCommand::class]);
 		}
 	}
 	
@@ -35,7 +36,7 @@ class MystServiceProvider extends ServiceProvider
 	public function register()
 	{
 		$this->app->singleton('Blaze\Myst\Bot', function () {
-			$config = config('blazing');
+			$config = config('myst');
 			$manager = new BotsManager($config);
 			return $manager->getActiveBot();
 		});

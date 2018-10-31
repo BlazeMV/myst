@@ -2,7 +2,7 @@
 
 namespace App\Telegram\CallbackQueries;
 
-use Blaze\Blazing\Api\Request\AnswerCallbackQuery;
+use Blaze\Blazing\Api\Requests\AnswerCallbackQuery;
 use Blaze\Blazing\Controllers\CallbackQueriesController;
 
 class DummyClassNameCallbackQuery extends CallbackQueriesController

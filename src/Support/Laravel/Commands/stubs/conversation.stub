@@ -2,7 +2,7 @@
 
 namespace App\Telegram\Conversations;
 
-use Blaze\Blazing\Api\Request\SendMessage;
+use Blaze\Blazing\Api\Requests\SendMessage;
 use Blaze\Blazing\Controllers\ConversationController;
 
 class DummyClassNameConversation extends ConversationController
