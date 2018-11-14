@@ -1,6 +1,6 @@
 <?php
 
-namespace Myst\Markup;
+namespace Blaze\Myst\Api\Requests\Markup;
 
 use Blaze\Myst\Exceptions\MarkupException;
 

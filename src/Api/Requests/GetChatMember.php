@@ -6,7 +6,7 @@ use Blaze\Myst\Api\Objects\User;
 
 class GetChatMember extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
         return User::class;
     }

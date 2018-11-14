@@ -2,13 +2,11 @@
 
 namespace Blaze\Myst\Api\Requests;
 
-use Blaze\Myst\Api\Objects\Raw;
-
 class KickChatMember extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
-        return Raw::class;
+        return 'bool';
     }
     
     

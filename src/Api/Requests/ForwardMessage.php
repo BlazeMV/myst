@@ -6,7 +6,7 @@ use Blaze\Myst\Api\Objects\Message;
 
 class ForwardMessage extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
         return Message::class;
     }

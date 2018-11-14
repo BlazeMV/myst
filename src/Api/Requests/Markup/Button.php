@@ -1,6 +1,6 @@
 <?php
 
-namespace Myst\Markup;
+namespace Blaze\Myst\Api\Requests\Markup;
 
 use Blaze\Myst\Exceptions\MarkupException;
 
@@ -17,16 +17,59 @@ class Button extends BaseMarkup
         $this->text = $text;
         return $this;
     }
-
-    public function setField($field)
+    
+    public function requestContact()
     {
-        if (!in_array($field, $this->accepted_fields)) throw new MarkupException("$field is not an accepted field type.");
-        $this->field = $field;
+        $this->field = 'request_contact';
+        $this->value = true;
         return $this;
     }
-
-    public function setValue($value)
+    
+    public function requestLocation()
     {
+        $this->field = 'request_location';
+        $this->value = true;
+        return $this;
+    }
+    
+    public function url($value)
+    {
+        $this->field = 'url';
+        $this->value = $value;
+        return $this;
+    }
+    
+    public function callbackData($value)
+    {
+        $this->field = 'callback_data';
+        $this->value = $value;
+        return $this;
+    }
+    
+    public function switchInlineQuery($value)
+    {
+        $this->field = 'switch_inline_query';
+        $this->value = $value;
+        return $this;
+    }
+    
+    public function switchInlineQueryCurrentChat($value)
+    {
+        $this->field = 'switch_inline_query_current_chat';
+        $this->value = $value;
+        return $this;
+    }
+    
+    public function callbackGame($value)
+    {
+        $this->field = 'callback_game';
+        $this->value = $value;
+        return $this;
+    }
+    
+    public function pay($value)
+    {
+        $this->field = 'pay';
         $this->value = $value;
         return $this;
     }

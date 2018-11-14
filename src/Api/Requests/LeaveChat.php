@@ -2,13 +2,11 @@
 
 namespace Blaze\Myst\Api\Requests;
 
-use Blaze\Myst\Api\Objects\Raw;
-
 class LeaveChat extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
-        return Raw::class;
+        return 'bool';
     }
     
     

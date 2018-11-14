@@ -9,20 +9,23 @@ use Blaze\Myst\Exceptions\MystException;
 use Blaze\Myst\Services\ConfigService;
 use Illuminate\Support\Facades\Cache;
 
-abstract class ConversationController extends BaseController {
-
-    protected $conversation;
-
-    public function make(Bot $bot, Update $update)
+abstract class ConversationController
+{
+    protected $bot;
+    
+    protected $update;
+    
+    protected $expires_at;
+    
+    public static function make(Bot $bot, Update $update)
     {
-        try {
-            $console = app()->runningInConsole();   // this will throw an error if not laravel
-        }catch (\Throwable $e){
-            throw new MystException("Conversations is not supported outside laravel.");
-        }
-
-        $this->setup($bot, $update);
-
+        $convo = new static();
+        $convo->bot = $bot;
+        $convo->update = $update;
+        
+        return $convo;
+        
+        /*
         $this->conversation = $this->getConvo();
 
         $step = $this->getStep();
@@ -30,12 +33,12 @@ abstract class ConversationController extends BaseController {
             $this->init();
         }
 
-        return $this->handle($step);
+        return $this->handle($step);*/
     }
+    
+    
 
-    abstract public function handle($step);
-
-    protected function init()
+    /*protected function init()
     {
         $convo = [
             'name'          => $this->getName(),
@@ -120,5 +123,5 @@ abstract class ConversationController extends BaseController {
         Cache::forever(ConfigService::getConversationCacheKey(), $convos);
 
         return $this;
-    }
+    }*/
 }

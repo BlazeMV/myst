@@ -6,7 +6,6 @@ use Blaze\Myst\Api\Objects\Update;
 use Blaze\Myst\Api\Requests\BaseRequest;
 use Blaze\Myst\Exceptions\ConfigurationException;
 use Blaze\Myst\Services\ConfigService;
-use Blaze\Myst\Traits\AvailableMethods;
 use Blaze\Myst\Traits\StacksHandler;
 
 class Bot
@@ -25,7 +24,7 @@ class Bot
      *
      * @param array $config
      * @throws ConfigurationException
-     * @throws Exceptions\CommandStackException
+     * @throws Exceptions\StackException
      */
 	public function __construct(array $config)
 	{
@@ -44,12 +43,28 @@ class Bot
 	 */
 	public function getConfig($key)
 	{
+	    if (property_exists($this, $key)) return $this->$key;
+	    
 		if (array_has($this->config, $key)) return array_get($this->config, $key);
 		
 		throw new ConfigurationException("Unknown config key $key");
 	}
-	
-	public function handleUpdate(callable $pre_function = null)
+    
+    /**
+     * @param bool $async
+     * @return $this
+     */
+    public function async(bool $async = true)
+    {
+        $this->async = $async;
+        return $this;
+	}
+    
+    /**
+     * @param callable|null $pre_function
+     * @return Update
+     */
+    public function handleUpdate(callable $pre_function = null)
 	{
 		$update = $this->getWebhookUpdate();
 		
@@ -59,14 +74,25 @@ class Bot
 		
 		return $update->processUpdate();
 	}
-	
-	public function getWebhookUpdate()
+    
+    /**
+     * @return Update
+     * @throws Exceptions\MystException
+     */
+    public function getWebhookUpdate()
 	{
 		$body = json_decode(file_get_contents('php://input'), true);
 		return (new Update($body))->setBot($this);
 	}
-	
-	public function sendRequest(BaseRequest $request)
+    
+    /**
+     * @param BaseRequest $request
+     * @return Api\Response
+     * @throws ConfigurationException
+     * @throws Exceptions\HttpException
+     * @throws Exceptions\RequestException
+     */
+    public function sendRequest(BaseRequest $request)
 	{
 		$request->setBot($this);
 		return $request->send();

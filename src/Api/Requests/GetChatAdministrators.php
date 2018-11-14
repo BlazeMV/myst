@@ -6,12 +6,12 @@ use Blaze\Myst\Api\Objects\User;
 
 class GetChatAdministrators extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
         return User::class;
     }
     
-    protected function multipleResponseObjects()
+    protected function multipleResponseObjects() : bool
     {
         return true;
     }

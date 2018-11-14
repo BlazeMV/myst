@@ -3,6 +3,7 @@
 namespace Blaze\Myst\Api;
 
 use Blaze\Myst\Api\Objects\Raw;
+use Blaze\Myst\Exceptions\MystException;
 use Illuminate\Support\Collection;
 
 class ApiObject extends BaseObject
@@ -83,77 +84,60 @@ class ApiObject extends BaseObject
             'chat_id'       => 'id',
 		];
 	}
-	
-	/**
-	 * Initialize a new instance of this class.
-	 *
-	 * @param $data
-	 */
-	public function __construct($data)
+    
+    /**
+     * Initialize a new instance of this class.
+     *
+     * @param array $data
+     * @throws MystException
+     */
+	public function __construct(array $data)
 	{
-	    if (!is_array($data)) return new Raw($data);
-	    
-		// Merge $proposed_property_aliases and $global_property_aliases into $property_aliases collection
+		// Merge proposedPropertyAliases() and globalPropertyAliases() into $property_aliases collection
 		$property_aliases = $this->propagatePropertyAliases();
 		
-		$constructed_data = [];
 		$single_relations = collect($this->singleObjectRelations());
 		$multiple_relations = collect($this->multipleObjectRelations());
 		
-		foreach ($data as $key => $item) {
+		foreach ($data as $key => &$item) {
 		    
-		    if (is_string($item)) $item = trim($item);
+		    if (is_string($item)) trim($item);
 			
-			if ($item === null) {
-				
-				$constructed_data[$key] = $item;
-				if ($property_aliases->has($key)) $constructed_data[$property_aliases->get($key)] = $item;
-				
-			} elseif ($single_relations->has($key)) {
+			if ($single_relations->has($key)) {
 				
 				$className = $single_relations->get($key);
 				$temp = new $className($item);
-				$constructed_data[$key] = $temp;
-				
-				if ($property_aliases->has($key)) $constructed_data[$property_aliases->get($key)] = $temp;
+				$item = $temp;
 				
 			} elseif ($multiple_relations->has($key)) {
 				
 				$className = $multiple_relations->get($key);
 				$temp = [];
+				foreach ($item as $value) $temp[] = new $className($value);
+				$item = $temp;
 				
-				foreach ($item as $value) {
-					$temp[] = new $className($value);
-				}
-				
-				$temp = new Collection($temp);
-				$constructed_data[$key] = $temp;
-				
-				if ($property_aliases->has($key)) $constructed_data[$property_aliases->get($key)] = $temp;
-				
-			} else {
-				
-				$constructed_data[$key] = $item;
-				if ($property_aliases->has($key)) $constructed_data[$property_aliases->get($key)] = $item;
 			}
+			
+			if ($property_aliases->has($key) && !isset($data[$key])) $data[$property_aliases->get($key)] = $item;
 		}
-		parent::__construct($constructed_data);
+		parent::__construct($data);
 	}
-	
-	/**
-	 * propagates all property aliases by merging global and proposed property_aliases
-	 *
-	 * @return Collection
-	 */
+    
+    /**
+     * propagates all property aliases by merging global and proposed property_aliases
+     *
+     * @return Collection
+     * @throws MystException
+     */
 	private function propagatePropertyAliases()
 	{
 		$property_aliases = collect();
-		if (!is_array($this->globalPropertyAliases())) throw new CitadelException("\"method globalPropertyAliases()\" should return an array.");
+		if (!is_array($this->globalPropertyAliases())) throw new MystException("\"method globalPropertyAliases()\" should return an array.");
 		foreach ($this->globalPropertyAliases() as $original => $alias) {
 			if (!is_string($alias) || is_int($alias)) continue;
 			$property_aliases->put($original, $alias);
 		}
-		if (!is_array($this->proposedPropertyAliases())) throw new CitadelException("\"method proposedPropertyAliases\" should return an array.");
+		if (!is_array($this->proposedPropertyAliases())) throw new MystException("\"method proposedPropertyAliases()\" should return an array.");
 		foreach ($this->proposedPropertyAliases() as $original => $alias) {
 			if (!is_string($alias) || is_int($alias)) continue;
 			$property_aliases->put($original, $alias);

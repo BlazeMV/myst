@@ -6,7 +6,7 @@ use Blaze\Myst\Api\Objects\Chat;
 
 class GetChat extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
         return Chat::class;
     }

@@ -5,9 +5,8 @@ namespace Blaze\Myst\Api;
 use Blaze\Myst\Api\Objects\Collection;
 use Blaze\Myst\Api\Objects\Error;
 use Blaze\Myst\Api\Objects\Raw;
-use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
-use Blaze\Myst\Exceptions\UnexpectedObjectTypeException;
 
 /**
  * Represents a Response from an Api request
@@ -16,156 +15,165 @@ use Blaze\Myst\Exceptions\UnexpectedObjectTypeException;
  */
 class Response
 {
+    /**
+     * @var int $statusCode
+     */
+    protected $statusCode;
+    
+    
 	/**
 	 * @var ResponseInterface $response
 	 */
 	protected $response;
 	
+	
 	/**
-	 * @var RequestInterface $request
+	 * @var PromiseInterface $promise
+	 */
+	protected $promise;
+	
+	
+	/**
+	 * @var array $request
 	 */
 	protected $request;
+    
 	
-	/**
-	 * @var int $statusCode
-	 */
-	protected $statusCode;
-	
-	/**
-	 * @var mixed $response_body
-	 */
-	protected $response_body;
-	
-	/**
-	 * @var mixed $request_body
-	 */
-	protected $request_body;
-	
-	/**
-	 * @var string $message
-	 */
-	protected $message;
-	
-	/**
-	 * @var array $trace
-	 */
-	protected $trace;
-	
-	/**
-	 * Response constructor.
-	 * @param ResponseInterface $response
-	 * @param RequestInterface|null $request
-	 * @param array|null $trace
-	 */
-	public function __construct(ResponseInterface $response, RequestInterface $request = null, array $trace = null)
-	{
-		$this->response = $response;
-		$this->request = $request;
-		$this->statusCode = $response->getStatusCode();
-		$this->response_body = json_decode($response->getBody()->getContents(), true);
-		$this->message = $response->getReasonPhrase();
-		$this->trace = $trace;
-		if ($request !== null) $this->request_body = json_decode($request->getBody()->getContents(), true);
-	}
-	
-	/**
-	 * convert this response to an Api object
-	 * @param string $class
-	 * @param boolean $multiple_objects
-	 * @return Mixed
-	 */
-	public function castToObject($class, $multiple_objects = false)
-	{
-		if ($this->isOk()) {
-		 
-			if (!is_array($this->getResponseBody()))
-			    return new Raw($this->getResponseBody());
-			
-			if ($multiple_objects){
-				$objects = [];
-				foreach ($this->getResponseBody() as $item) {
-					$objects[] = new $class($item);
-				}
-				return new Collection($objects);
-			} else {
-				return new $class($this->getResponseBody());
-			}
-		} else {
-			return new Error([
-				'error_code' => $this->getStatusCode(),
-				'errors' => $this->getResponseBody(),
-				'response_body' => $this->getResponseBody(),
-				'request_body' => $this->getRequestBody(),
-				'response' => $this->getResponse(),
-				'request' => $this->getRequest(),
-				'message' =>$this->getMessage(),
-				'trace' => $this->getTrace(),
-			]);
-		}
-	}
+    /**
+     * @var \Throwable $exception
+     */
+    protected $exception;
+
+    
+    /**
+     * @var mixed
+     */
+    protected $object;
+    
+    private static $scalar_types = ['int', 'integer', 'bool', 'boolean', 'float', 'double', 'real', 'string', 'array', 'object', 'unset'];
+    
+    /**
+     * Response constructor.
+     * @param int $statusCode
+     * @param array $request
+     * @param ResponseInterface|null $response
+     * @param PromiseInterface|null $promise
+     * @param \Throwable|null $exception
+     */
+    public function __construct(int $statusCode, array $request, ResponseInterface $response = null, PromiseInterface $promise = null, \Throwable $exception = null)
+    {
+        $this->statusCode = $statusCode;
+        $this->response = $response;
+        $this->promise = $promise;
+        $this->request = $request;
+        $this->exception = $exception;
+    }
 	
 	/**
 	 * whether or not this response is an ok response (http code 200 - 299)
 	 * @return bool
 	 */
-	public function isOk()
+	public function isOk() : bool
 	{
-		return ($this->statusCode >=200 && $this->statusCode < 300);
+		if ($this->getStatusCode() >=200 && $this->getStatusCode() < 300 && $this->getResponse() && $this->getResponseBody()['ok']) return true;
+        
+        return false;
 	}
-	
-	/**
-	 * @return ResponseInterface
-	 */
-	public function getResponse(): ResponseInterface
-	{
-		return $this->response;
-	}
-	
-	/**
-	 * @return RequestInterface
-	 */
-	public function getRequest(): RequestInterface
-	{
-		return $this->request;
-	}
-	
-	/**
-	 * @return int
-	 */
-	public function getStatusCode(): int
-	{
-		return $this->statusCode;
-	}
-	
-	/**
-	 * @return mixed
-	 */
-	public function getResponseBody()
-	{
-		return $this->response_body;
-	}
-	
-	/**
-	 * @return mixed
-	 */
-	public function getRequestBody()
-	{
-		return $this->request_body;
-	}
-	
-	/**
-	 * @return string
-	 */
-	public function getMessage(): string
-	{
-		return $this->message;
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function getTrace(): array
-	{
-		return $this->trace;
-	}
+    
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+    
+    /**
+     * @return ResponseInterface|null
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+    
+    /**
+     * @return PromiseInterface
+     */
+    public function getPromise(): PromiseInterface
+    {
+        return $this->promise;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getRequest(): array
+    {
+        return $this->request;
+    }
+    
+    /**
+     * @return \Throwable|null
+     */
+    public function getException()
+    {
+        return $this->exception;
+    }
+    
+    /**
+     * @return array|null
+     */
+    public function getResponseBody()
+    {
+        if ($this->getResponse() === null) return null;
+        $this->getResponse()->getBody()->rewind();
+        return json_decode($this->getResponse()->getBody()->getContents(), true);
+    }
+    
+    /**
+     * @return null|string
+     */
+    public function getErrorMessage()
+    {
+        if ($this->getStatusCode() === 0) return 'Async Request';
+        
+        if (isset($this->getResponseBody()['description'])) return $this->getResponseBody()['description'];
+        
+        if ($this->getResponse() !== null) return $this->getResponse()->getReasonPhrase();
+        
+        if ($this->getException()) return $this->getException()->getMessage();
+        
+        return null;
+    }
+    
+    /**
+     * @param $class
+     * @param bool $multiple
+     * @return $this
+     */
+    public function setResponseObject($class, bool $multiple)
+    {
+        if (in_array($class, static::$scalar_types)) {
+            $this->object = $this->getResponseBody();
+            settype($this->object, $class);
+        }else {
+            if ($multiple) {
+                foreach ($this->getResponseBody()['result'] as $item) {
+                    $this->object[] = new $class($item);
+                }
+        
+            } else {
+                $this->object = new $class($this->getResponseBody()['result']);
+            }
+        }
+        return $this;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getResponseObject()
+    {
+        return $this->object;
+    }
 }

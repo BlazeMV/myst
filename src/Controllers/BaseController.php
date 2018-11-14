@@ -2,6 +2,9 @@
 
 namespace Blaze\Myst\Controllers;
 
+use Blaze\Myst\Api\Requests\BaseRequest;
+use Blaze\Myst\Api\Requests\SendMessage;
+use Blaze\Myst\Api\Response;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Api\Objects\Update;
 
@@ -213,5 +216,13 @@ abstract class BaseController
         return $this;
     }
     
-    
+    /**
+     * @param BaseRequest $request
+     * @return Response
+     */
+    public function replyWith(BaseRequest $request)
+    {
+        if ($request instanceof SendMessage)
+            return $request->setBot($this->getBot())->to($this->getUpdate()->getChat()->getId())->replyTo($this->getUpdate()->getMessage()->getId())->send();
+    }
 }

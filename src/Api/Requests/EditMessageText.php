@@ -6,7 +6,7 @@ use Blaze\Myst\Api\Objects\Message;
 
 class EditMessageText extends BaseRequest
 {
-    protected function responseObject()
+    protected function responseObject() : string
     {
         return Message::class;
     }

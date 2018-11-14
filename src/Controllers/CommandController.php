@@ -6,5 +6,5 @@ use Blaze\Myst\Traits\ReplyWith;
 
 abstract class CommandController extends BaseController
 {
-    use ReplyWith;
+    
 }
