@@ -16,8 +16,12 @@ class Update extends ApiObject
     public function setBot(Bot $bot)
     {
         $this->bot = $bot;
-        
         return $this;
+    }
+    
+    public function getBot()
+    {
+        return $this->bot;
     }
     
     /**
