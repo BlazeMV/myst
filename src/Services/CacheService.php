@@ -13,18 +13,21 @@ class CacheService
     
     protected $user_id;
     
-    protected $myst_cache;
-    
-    protected $cache;
-    
     public function __construct($chat_id, $user_id)
     {
         $this->prefix = ConfigService::getConversationCacheKey();
         $this->chat_id = $chat_id;
         $this->user_id = $user_id;
+    }
     
-        $this->myst_cache = Cache::get($this->prefix);
-        $this->cache = $this->myst_cache[$chat_id][$user_id] ?? null;
+    protected function getMystCache()
+    {
+        return Cache::get($this->prefix);
+    }
+    
+    public function getCache()
+    {
+        return $this->getMystCache()[$this->chat_id][$this->user_id] ?? null;
     }
     
     public function getName()
@@ -54,18 +57,18 @@ class CacheService
     
     public function forward($step, $message_id)
     {
-        if (!$this->cache) return false;
+        if (!$this->getCache()) return false;
         
-        $this->cache['step'] = $this->cache['step'] + 1;
-        $this->cache['steps'][] = $step;
-        $this->cache['reply_msg_id'] = $message_id;
+        $this->getCache()['step'] = $this->getCache()['step'] + 1;
+        $this->getCache()['steps'][] = $step;
+        $this->getCache()['reply_msg_id'] = $message_id;
         
         return $this->saveCache();
     }
     
     public function init($name, $total_steps)
     {
-        if ($this->cache) return false;
+        if ($this->getCache()) return false;
         
         $convo = [
             'name'          => $name,
@@ -75,31 +78,31 @@ class CacheService
             'expires_at'    => now()->addMinutes(60)
         ];
         
-        $this->myst_cache[$this->chat_id][$this->user_id] = $convo;
+        $this->getMystCache()[$this->chat_id][$this->user_id] = $convo;
         return $this->saveCache();
     }
     
     public function destroy()
     {
-        unset($this->myst_cache[$this->chat_id][$this->user_id]);
+        unset($this->getMystCache()[$this->chat_id][$this->user_id]);
         return $this->saveCache();
     }
     
     protected function saveCache()
     {
-        $this->myst_cache[$this->chat_id][$this->user_id] = $this->cache;
-        Cache::forever($this->prefix, $this->myst_cache);
+        $this->getMystCache()[$this->chat_id][$this->user_id] = $this->getCache();
+        Cache::forever($this->prefix, $this->getMystCache());
         
         return true;
     }
     
     protected function removeExpired()
     {
-        foreach ($this->myst_cache as $chat_id => $chat) {
+        foreach ($this->getMystCache() as $chat_id => $chat) {
             foreach ($chat as $user_id => $user) {
-                if (Carbon::parse($user['expires_at'])->greaterThanOrEqualTo(Carbon::now())) unset($this->myst_cache[$chat_id][$user_id]);
+                if (Carbon::parse($user['expires_at'])->greaterThanOrEqualTo(Carbon::now())) unset($this->getMystCache()[$chat_id][$user_id]);
             }
-            if (count($chat) < 1) unset($this->myst_cache[$chat_id]);
+            if (count($chat) < 1) unset($this->getMystCache()[$chat_id]);
         }
         return $this->saveCache();
     }
