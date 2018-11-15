@@ -97,27 +97,27 @@ class Update extends ApiObject
     {
         switch ($this->detectType()) {
             case 'message':
-                return $this->get('message');
+                return $this->getMessage();
             case 'edited_message':
-                return $this->get('editedMessage');
+                return $this->getEditedMessage();
             case 'channel_post':
-                return $this->get('channelPost');
+                return $this->getChannelPost();
             case 'edited_channel_post':
-                return $this->editedChannelPost;
+                return $this->getEditedChannelPost();
             case 'inline_query':
-                return $this->inlineQuery;
+                return $this->getInlineQuery();
             case 'chosen_inline_result':
-                return $this->chosenInlineResult;
+                return $this->getChosenInlineResult();
             case 'callback_query':
-                $callbackQuery = $this->callbackQuery;
+                $callbackQuery = $this->getCallbackQuery();
                 if ($callbackQuery->has('message')) {
-                    return $callbackQuery->message;
+                    return $callbackQuery->getMessage();
                 }
                 break;
             case 'shipping_query':
-                return $this->shippingQuery;
+                return $this->getShippingQuery();
             case 'pre_checkout_query':
-                return $this->preCheckoutQuery;
+                return $this->getPreCheckoutQuery();
         }
         
         return null;
@@ -130,9 +130,16 @@ class Update extends ApiObject
      */
     public function getChat()
     {
-        if ($this->isType('message') || $this->isType('edited_message')) return $this->getMessage()->getChat();
+        /*if ($this->isType('message') || $this->isType('edited_message')) return $this->getMessage()->getChat();
         if ($this->isType('callback_query')) return $this->getCallbackQuery()->getMessage()->getChat();
-        return null;
+        return null;*/
+        
+        return $this->getMessage() === null ? null : $this->getMessage()->getChat();
+    }
+    
+    public function getFrom()
+    {
+        return $this->getMessage() === null ? null : $this->getMessage()->getFrom();
     }
     
     private function entityInPosition($text, $position, $offset, $length)
