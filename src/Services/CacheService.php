@@ -55,12 +55,12 @@ class CacheService
         return $this->cache['expires_at'] ?? null;
     }
     
-    public function forward($step, $message_id)
+    public function forward($update, $message_id)
     {
         if (!$this->getCache()) return false;
         
         $this->getCache()['step'] = $this->getCache()['step'] + 1;
-        $this->getCache()['steps'][] = $step;
+        $this->getCache()['steps'][] = $update;
         $this->getCache()['reply_msg_id'] = $message_id;
         
         return $this->saveCache();
