@@ -66,13 +66,13 @@ class CacheService
         return $this->saveCache();
     }
     
-    public function init($name, $total_steps)
+    public function init($name)
     {
         if ($this->getCache()) return false;
         
         $convo = [
             'name'          => $name,
-            'step'          => $total_steps,
+            'step'          => 0,
             'steps'         => [],
             'reply_msg_id'  => null,
             'expires_at'    => now()->addMinutes(60)
