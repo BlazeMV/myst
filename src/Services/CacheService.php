@@ -50,9 +50,9 @@ class CacheService
         return $this->cache['steps'][$step] ?? null;
     }
     
-    public function expiresAt($step)
+    public function expiresAt()
     {
-        return $this->cache['expires_at'][$step] ?? null;
+        return $this->cache['expires_at'] ?? null;
     }
     
     public function forward($step, $message_id)
