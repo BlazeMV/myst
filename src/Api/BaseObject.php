@@ -17,7 +17,8 @@ abstract class BaseObject extends Collection
                     return $this->get(snake_case($key));
                 }
             }
-            trigger_error("Call to undefined method '{$method}'");
+//            trigger_error("Call to undefined method '{$method}'");
+            return null;
         }
     }
 }
