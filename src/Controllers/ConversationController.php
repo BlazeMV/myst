@@ -2,126 +2,78 @@
 
 namespace Blaze\Myst\Controllers;
 
-use Blaze\Myst\Api\Requests\SendMessage;
-use Blaze\Myst\Bot;
 use Blaze\Myst\Api\Objects\Update;
-use Blaze\Myst\Exceptions\MystException;
-use Blaze\Myst\Services\ConfigService;
-use Illuminate\Support\Facades\Cache;
+use Blaze\Myst\Bot;
+use Blaze\Myst\Services\ConversationService;
+use Carbon\Carbon;
 
-abstract class ConversationController
+abstract class ConversationController extends BaseController
 {
-    protected $bot;
+    /**
+     * @var ConversationService $conversation_service
+    */
+    protected $conversation_service;
     
-    protected $update;
-    
-    protected $expires_at;
-    
-    public static function make(Bot $bot, Update $update)
+    public function make(Bot $bot, Update $update, array $conversation)
     {
-        $convo = new static();
-        $convo->bot = $bot;
-        $convo->update = $update;
-        
-        return $convo;
-        
-        /*
-        $this->conversation = $this->getConvo();
-
-        $step = $this->getStep();
-        if ($this->getStep() == 1){
-            $this->init();
-        }
-
-        return $this->handle($step);*/
+        $this->setup($bot, $update);
+        $this->conversation_service = new ConversationService();
+    
+        $this->handle($conversation['step']);
     }
     
+    protected function getConversationService()
+    {
+        return $this->conversation_service;
+    }
     
-
-    /*protected function init()
+    public function getConversation()
+    {
+        return $this->getConversationService()->getConversation($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId());
+    }
+    
+    public static function init(Update $update, $bot_message_id)
     {
         $convo = [
-            'name'          => $this->getName(),
-            'step'          => $this->getStep(),
-            'steps'         => [],
-            'reply_msg_id'  => null,
-            'expires_at'    => now()->addMinutes(60)
+            'name' => (new static())->getName(),
+            'step' => 2,
+            'reply_message_id' => $bot_message_id,
+            'expires_at' => Carbon::now()->addMinute(60),
+            'messages' => [
+                1 => [
+                    $update->getMessage(),
+                ]
+            ],
         ];
-
-        if (isset($this->conversation)){
-            $this->bot->sendRequest(SendMessage::make()->text('There is an ongoing conversion of yours in this chat. Please terminate it before starting a new conversation.')->to($this->update()->getChat()->getId()));
-            exit;
-        }else{
-            $this->saveConvo($convo);
-        }
+        $conversation_service = new ConversationService();
+        $conversation_service->putConversation($update->getChat()->getId(), $update->getFrom()->getId(), $convo);
     }
-
-    protected function getConvo()
+    
+    public function nextStep($bot_message_id)
     {
-        return Cache::get(ConfigService::getConversationCacheKey())[$this->update->getChat()->getId()][$this->update->getMessage()->getFrom()->getId()];
-    }
-
-    protected function saveConvo(array $convo = null)
-    {
-        if ($convo == null) $convo = $this->conversation;
-        $convos = Cache::get(ConfigService::getConversationCacheKey());
-        $convos[$this->update->getChat()->getId()][$this->update->getMessage()->getFrom()->getId()] = $convo;
-        Cache::forever(ConfigService::getConversationCacheKey(), $convos);
-        $this->conversation = $convo;
-    }
-
-    public function getStep()
-    {
-        if (!isset($this->conversation)){
-            return 1;
-        }else{
-            return $this->conversation['step'];
-        }
-    }
-
-    public function setReplyMessageId($id){
-        $this->conversation['reply_msg_id'] = $id;
-        $this->saveConvo();
-
-        return $this;
-    }
-
-    public function nextStep()
-    {
-        $current_step = $this->getStep();
-        $current_step++;
-        $this->conversation['step'] = $current_step;
-        $this->saveConvo();
-
+        $convo = $this->getConversation();
+        $convo['step'] = $convo['step'] + 1;
+        $convo['reply_message_id'] = $bot_message_id;
+        $convo['messages'][$convo['step']][] = $this->getUpdate()->getMessage();
+        $this->getConversationService()->putConversation($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId(), $convo);
+        
         return $this;
     }
     
-    public function saveUpdate()
-    {
-        $this->conversation['steps'][$this->getStep()][] = $this->update->getRaw();
-        $this->saveConvo();
-
-        return $this;
-    }
-
-    public function getStepUpdates()
-    {
-        $steps = $this->conversation['steps'];
-        $updates = [];
-        foreach ($steps as $step_id => $step) {
-            foreach ($step as $update) {
-                $updates[$step_id][] = json_decode($update, true);
-            }
-        }
-        return $updates;
-    }
-
     public function terminate()
     {
-        $convos = Cache::get(ConfigService::getConversationCacheKey());
-        unset($convos[$this->update->getChat()->getId()][$this->update->getMessage()->getFrom()->getId()]);
-        Cache::forever(ConfigService::getConversationCacheKey(), $convos);
-
-        return $this;
-    }*/
+        return $this->getConversationService()->destroy($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId());
+    }
+    
+    public function getMessages(int $step = null)
+    {
+        $convo = $this->getConversation();
+        if (!isset($convo['messages'])) return [];
+        if ($step == null) {
+            return $convo['messages'];
+        } else {
+            if (!isset($convo['messages'][$step])) return [];
+            return $convo['messages'][$step];
+        }
+    }
 }
