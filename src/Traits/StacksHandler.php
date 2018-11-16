@@ -98,11 +98,7 @@ trait StacksHandler
         if (!class_exists($conversation_class)) throw new StackException("class $conversation_class not found.");
         $conversation = new $conversation_class;
         if (!$conversation instanceof ConversationController) throw new StackException("$conversation_class must be an instance of " . ConversationController::class);
-        $names = array_merge($conversation->getAliases(), [$conversation->getName()]);
-        foreach ($names as $name) {
-            if (array_has($this->conversations_stack, $name)) throw new StackException("$name has already been registered as a conversation.");
-            $this->conversations_stack[$name] = $conversation;
-        }
+        $this->conversations_stack[$conversation->getName()] = $conversation;
     }
     
     /**
