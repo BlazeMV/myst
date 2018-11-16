@@ -118,7 +118,7 @@ class ApiObject extends BaseObject
 				
 			}
 			
-			if ($property_aliases->has($key) && !isset($data[$key])) $data[$property_aliases->get($key)] = $item;
+			if ($property_aliases->has($key) && !isset($data[$property_aliases->get($key)])) $data[$property_aliases->get($key)] = $item;
 		}
 		parent::__construct($data);
 	}
