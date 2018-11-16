@@ -24,6 +24,7 @@ return [
                 'text'                          => true,
                 'hashtags'                      => true,
                 'mentions'                      => true,
+                'conversations'                 => true,
             ],
 			'commands'                      => [
 			

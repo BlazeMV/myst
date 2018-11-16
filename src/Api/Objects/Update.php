@@ -5,6 +5,7 @@ namespace Blaze\Myst\Api\Objects;
 use Blaze\Myst\Api\ApiObject;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\CommandController;
+use Blaze\Myst\Services\ConversationService;
 
 class Update extends ApiObject
 {
@@ -97,29 +98,23 @@ class Update extends ApiObject
     {
         switch ($this->detectType()) {
             case 'message':
-                return $this->getMessage();
+                return $this->get('message');
             case 'edited_message':
-                return $this->getEditedMessage();
+                return $this->get('edited_message');
             case 'channel_post':
-                return $this->getChannelPost();
+                return $this->get('channel_post');
             case 'edited_channel_post':
-                return $this->getEditedChannelPost();
-            case 'inline_query':
-                return $this->getInlineQuery();
-            case 'chosen_inline_result':
-                return $this->getChosenInlineResult();
+                return $this->get('edited_channel_post');
             case 'callback_query':
-                $callbackQuery = $this->getCallbackQuery();
+                $callbackQuery = $this->get('callback_query');
                 if ($callbackQuery->has('message')) {
-                    return $callbackQuery->getMessage();
+                    return $callbackQuery->get('message');
                 }
                 break;
-            case 'shipping_query':
-                return $this->getShippingQuery();
-            case 'pre_checkout_query':
-                return $this->getPreCheckoutQuery();
+            default:
+                return null;
         }
-        
+    
         return null;
     }
     
@@ -192,17 +187,40 @@ class Update extends ApiObject
         
         if (!$this->bot->getConfig('engages_in.' . $this->getChat()->getType())) return $this;
         
+        $this->processConversations();
         $this->processCommand();
         
         return $this;
     }
     
     
+    public function processConversations()
+    {
+        if ($this->bot->getConfig('process.conversations') == false)  return true;
+    
+        if ($this->detectType() !== 'message') return true;
+    
+        if ($this->getMessage()->getReplyToMessage() === null) return true;
+    
+        $conversationService = new ConversationService();
+        if (!$conversationService->hasConversation($this->getChat()->getId(), $this->getFrom()->getId())) return true;
+        
+        $convo = $conversationService->getConversation($this->getChat()->getId(), $this->getFrom()->getId());
+        
+        if ($this->getMessage()->getReplyToMessage()->getId() !== $convo['reply_message_id']) return true;
+        
+        if (!isset($this->bot->getConversationsStack()[$convo['name']])) return true;
+        
+        $conversation = $this->bot->getConversationsStack()[$convo['name']];
+        
+        return $conversation->make($this->bot, $this, $convo);
+    }
+    
     public function processCommand()
     {
         if ($this->bot->getConfig('process.commands') == false)  return true;
         
-        if ($this->detectType() !== 'message') return true;
+        if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
         
         foreach ($this->bot->getCommandsStack() as $name => $command) {
             /**@var CommandController $command*/
