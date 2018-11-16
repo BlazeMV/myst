@@ -63,6 +63,7 @@ class Bot
     /**
      * @param callable|null $pre_function
      * @return Update
+     * @throws Exceptions\MystException
      */
     public function handleUpdate(callable $pre_function = null)
 	{
