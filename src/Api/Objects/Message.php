@@ -12,9 +12,9 @@ use Blaze\Myst\Api\ApiObject;
  * @method Chat getChat()
  * @method User getForwardFrom()
  * @method Chat getForwardFromChat()
- * @method string getReplyToMessage()
+ * @method Message getReplyToMessage()
  * @method string getText()
- * @method Collection getEntities()
+ * @method array getEntities()
  */
 class Message extends ApiObject
 {
@@ -25,6 +25,7 @@ class Message extends ApiObject
             'chat' => Chat::class,
             'forward_from' => User::class,
             'forward_from_chat' => Chat::class,
+            'reply_to_message' => Message::class,
         ];
     }
     
