@@ -52,7 +52,7 @@ abstract class BaseController
         $this->update = $update;
     }
     
-    abstract public function handle($arguments);
+    abstract protected function handle($arguments);
     
     /**
      * @return Bot

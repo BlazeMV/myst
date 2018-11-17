@@ -20,6 +20,7 @@ abstract class ConversationController extends BaseController
         $this->conversation_service = new ConversationService();
     
         $this->handle($conversation['step']);
+        return $this;
     }
     
     protected function getConversationService()
@@ -32,21 +33,27 @@ abstract class ConversationController extends BaseController
         return $this->getConversationService()->getConversation($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId());
     }
     
-    public static function init(Update $update, $bot_message_id)
+    public static function init(Update $update)
     {
+        $self = new static();
         $convo = [
-            'name' => (new static())->getName(),
-            'step' => 2,
-            'reply_message_id' => $bot_message_id,
+            'name' => $self->getName(),
+            'step' => 1,
+            'reply_message_id' => null,
             'expires_at' => Carbon::now()->addMinute(60),
             'messages' => [
-                1 => [
-                    $update->getMessage(),
-                ]
+            
             ],
         ];
         $conversation_service = new ConversationService();
         $conversation_service->putConversation($update->getChat()->getId(), $update->getFrom()->getId(), $convo);
+        
+        return $self->make($update->getBot(), $update, $convo);
+    }
+    
+    protected function handle($step)
+    {
+        return $this->{'step' . $step}();
     }
     
     public function nextStep($bot_message_id)
