@@ -222,6 +222,8 @@ class Update extends ApiObject
         
         if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
         
+        if (!$this->getMessage()->has('entities')) return true;
+        
         foreach ($this->bot->getCommandsStack() as $name => $command) {
             /**@var CommandController $command*/
             foreach ($this->getMessage()->getEntities() as $entity) {
