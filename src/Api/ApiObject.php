@@ -114,7 +114,7 @@ class ApiObject extends BaseObject
 				$className = $multiple_relations->get($key);
 				$temp = [];
 				foreach ($item as $value) $temp[] = new $className($value);
-				$item = $temp;
+				$item = collect($temp);
 				
 			}
 			
