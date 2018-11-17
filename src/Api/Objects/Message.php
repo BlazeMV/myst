@@ -3,6 +3,7 @@
 namespace Blaze\Myst\Api\Objects;
 
 use Blaze\Myst\Api\ApiObject;
+use Illuminate\Support\Collection;
 
 /**
  * @method int getId()
@@ -14,7 +15,7 @@ use Blaze\Myst\Api\ApiObject;
  * @method Chat getForwardFromChat()
  * @method Message getReplyToMessage()
  * @method string getText()
- * @method array getEntities()
+ * @method Collection getEntities()
  */
 class Message extends ApiObject
 {
