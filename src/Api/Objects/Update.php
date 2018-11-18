@@ -4,9 +4,13 @@ namespace Blaze\Myst\Api\Objects;
 
 use Blaze\Myst\Api\ApiObject;
 use Blaze\Myst\Bot;
+use Blaze\Myst\Controllers\CallbackQueryController;
 use Blaze\Myst\Controllers\CommandController;
 use Blaze\Myst\Services\ConversationService;
 
+/**
+ * @method CallBackQuery getCallbackQuery()
+ */
 class Update extends ApiObject
 {
     /**
@@ -37,7 +41,7 @@ class Update extends ApiObject
 //            'edited_channel_post'  => EditedMessage::class,
 //            'inline_query'         => InlineQuery::class,
 //            'chosen_inline_result' => ChosenInlineResult::class,
-//            'callback_query'       => CallbackQuery::class,
+            'callback_query'       => CallbackQuery::class,
         ];
     }
     
@@ -137,7 +141,7 @@ class Update extends ApiObject
         return $this->getMessage() === null ? null : $this->getMessage()->getFrom();
     }
     
-    private function entityInPosition($text, $position, $offset, $length)
+    protected function entityInPosition($text, $position, $offset, $length)
     {
         switch ($position) {
             case 'any':
@@ -188,13 +192,14 @@ class Update extends ApiObject
         if (!$this->bot->getConfig('engages_in.' . $this->getChat()->getType())) return $this;
         
         $this->processConversations();
-        $this->processCommand();
+        $this->processCommands();
+        $this->processCallbackQueries();
         
         return $this;
     }
     
     
-    public function processConversations()
+    protected function processConversations()
     {
         if ($this->bot->getConfig('process.conversations') == false)  return true;
     
@@ -216,7 +221,7 @@ class Update extends ApiObject
         return $conversation->make($this->bot, $this, $convo);
     }
     
-    public function processCommand()
+    protected function processCommands()
     {
         if ($this->bot->getConfig('process.commands') == false)  return true;
         
@@ -232,7 +237,7 @@ class Update extends ApiObject
     
                 if (array_get($command->getEngagesIn(), $this->getChat()->getType()) == false) continue;
     
-                if ($command->isOnlyCommand() && strtolower($this->getMessage()->getText()) !== str_start(strtolower($name), '/')) continue;
+                if ($command->isStandalone() && strtolower($this->getMessage()->getText()) !== str_start(strtolower($name), '/')) continue;
                 
                 if (strtolower($entity->getText($this->getMessage()->getText())) !== str_start(strtolower($name), '/')) continue;
                 
@@ -240,7 +245,7 @@ class Update extends ApiObject
                 
                 if (!$this->entityInPosition($this->getMessage()->getText(), $command->getPosition(), $entity->getOffset(), $entity->getLength())) continue;
                 
-                if ($command->isOnlyCommand()) {
+                if ($command->isStandalone()) {
                     $args = [];
                 } else {
                     $args = $this->getArgs(substr($this->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $this->bot->getConfig('commands_param_seperator'));
@@ -248,6 +253,26 @@ class Update extends ApiObject
                 
                 return $command->make($this->bot, $this, $args);
             }
+        }
+        return true;
+    }
+    
+    protected function processCallbackQueries()
+    {
+        if ($this->bot->getConfig('process.callback_queries') == false)  return true;
+    
+        if ($this->detectType() !== 'callback_query') return true;
+    
+        foreach ($this->bot->getCallbackQueriesStack() as $name => $cbq) {
+            /**@var CallbackQueryController $cbq*/
+        
+            if (array_get($cbq->getEngagesIn(), $this->getChat()->getType()) == false) continue;
+            
+            if ($this->getCallbackQuery()->getData() !== $name && !starts_with($this->getCallbackQuery()->getData(), $name . $this->bot->getConfig('cbq_param_seperator'))) continue;
+            
+            $args = $this->getArgs(substr($this->getCallbackQuery()->getData(), strlen($name)), $this->bot->getConfig('cbq_param_seperator'));
+        
+            return $cbq->make($this->bot, $this, $args);
         }
         return true;
     }
