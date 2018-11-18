@@ -2,7 +2,7 @@
 
 namespace Blaze\Myst\Controllers;
 
-abstract class EntityBaseController extends BaseController
+abstract class EntitiesController extends BaseController
 {
     
     protected $aliases = [];
@@ -23,9 +23,9 @@ abstract class EntityBaseController extends BaseController
     
     /**
      * @param array $aliases
-     * @return EntityBaseController
+     * @return EntitiesController
      */
-    public function setAliases(array $aliases): EntityBaseController
+    public function setAliases(array $aliases): EntitiesController
     {
         $this->aliases = $aliases;
         return $this;
@@ -41,9 +41,9 @@ abstract class EntityBaseController extends BaseController
     
     /**
      * @param string $position
-     * @return EntityBaseController
+     * @return EntitiesController
      */
-    public function setPosition(string $position): EntityBaseController
+    public function setPosition(string $position): EntitiesController
     {
         $this->position = $position;
         return $this;
@@ -59,9 +59,9 @@ abstract class EntityBaseController extends BaseController
     
     /**
      * @param bool $standalone
-     * @return EntityBaseController
+     * @return EntitiesController
      */
-    public function setStandalone(bool $standalone): EntityBaseController
+    public function setStandalone(bool $standalone): EntitiesController
     {
         $this->standalone = $standalone;
         return $this;
@@ -77,9 +77,9 @@ abstract class EntityBaseController extends BaseController
     
     /**
      * @param bool $case_sensitive
-     * @return EntityBaseController
+     * @return EntitiesController
      */
-    public function setCaseSensitive(bool $case_sensitive): EntityBaseController
+    public function setCaseSensitive(bool $case_sensitive): EntitiesController
     {
         $this->case_sensitive = $case_sensitive;
         return $this;
