@@ -22,13 +22,7 @@ abstract class BaseController
     
     protected $name;
     
-    protected $aliases = [];
-    
     protected $description = "";
-    
-    protected $position = '*';
-    
-    protected $only_command = true;
     
     protected $engages_in = [
         'private'       => true,
@@ -36,8 +30,6 @@ abstract class BaseController
         'supergroup'    => true,
         'channel'       => true
     ];
-    
-    protected $case_sensitive = false;
     
     public function make(Bot $bot, Update $update, array $arguments)
     {
@@ -109,24 +101,6 @@ abstract class BaseController
     }
     
     /**
-     * @return array
-     */
-    public function getAliases(): array
-    {
-        return $this->aliases;
-    }
-    
-    /**
-     * @param array $aliases
-     * @return BaseController
-     */
-    public function setAliases(array $aliases): BaseController
-    {
-        $this->aliases = $aliases;
-        return $this;
-    }
-    
-    /**
      * @return string
      */
     public function getDescription(): string
@@ -145,42 +119,6 @@ abstract class BaseController
     }
     
     /**
-     * @return string
-     */
-    public function getPosition(): string
-    {
-        return $this->position;
-    }
-    
-    /**
-     * @param string $position
-     * @return BaseController
-     */
-    public function setPosition(string $position): BaseController
-    {
-        $this->position = $position;
-        return $this;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isOnlyCommand(): bool
-    {
-        return $this->only_command;
-    }
-    
-    /**
-     * @param bool $only_command
-     * @return BaseController
-     */
-    public function setOnlyCommand(bool $only_command): BaseController
-    {
-        $this->only_command = $only_command;
-        return $this;
-    }
-    
-    /**
      * @return array
      */
     public function getEngagesIn(): array
@@ -195,24 +133,6 @@ abstract class BaseController
     public function setEngagesIn(array $engages_in): BaseController
     {
         $this->engages_in = $engages_in;
-        return $this;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isCaseSensitive(): bool
-    {
-        return $this->case_sensitive;
-    }
-    
-    /**
-     * @param bool $case_sensitive
-     * @return BaseController
-     */
-    public function setCaseSensitive(bool $case_sensitive): BaseController
-    {
-        $this->case_sensitive = $case_sensitive;
         return $this;
     }
     
