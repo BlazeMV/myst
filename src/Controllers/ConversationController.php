@@ -59,8 +59,17 @@ abstract class ConversationController extends BaseController
     public function nextStep($bot_message_id)
     {
         $convo = $this->getConversation();
-        $convo['step'] = $convo['step'] + 1;
         $convo['reply_message_id'] = $bot_message_id;
+        $convo['messages'][$convo['step']][] = $this->getUpdate()->getMessage();
+        $convo['step'] = $convo['step'] + 1;
+        $this->getConversationService()->putConversation($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId(), $convo);
+        
+        return $this;
+    }
+    
+    public function saveResponse()
+    {
+        $convo = $this->getConversation();
         $convo['messages'][$convo['step']][] = $this->getUpdate()->getMessage();
         $this->getConversationService()->putConversation($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId(), $convo);
         
@@ -72,7 +81,7 @@ abstract class ConversationController extends BaseController
         return $this->getConversationService()->destroy($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId());
     }
     
-    public function getMessages(int $step = null)
+    public function getResponses(int $step = null)
     {
         $convo = $this->getConversation();
         if (!isset($convo['messages'])) return [];
