@@ -12,17 +12,17 @@ trait StacksHandler
     /**
      * @var array $commands_stack
     */
-    protected $commands_stack;
+    protected $commands_stack = [];
     
     /**
      * @var array $conversations_stack
     */
-    protected $conversations_stack;
+    protected $conversations_stack = [];
     
     /**
      * @var array $callback_queries_stack
      */
-    protected $callback_queries_stack;
+    protected $callback_queries_stack = [];
     
     /**
      * populates all stacks
