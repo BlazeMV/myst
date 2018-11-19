@@ -8,6 +8,7 @@ use Blaze\Myst\Controllers\CallbackQueryController;
 use Blaze\Myst\Controllers\CommandController;
 use Blaze\Myst\Controllers\HashtagController;
 use Blaze\Myst\Controllers\MentionController;
+use Blaze\Myst\Controllers\TextController;
 use Blaze\Myst\Services\ConversationService;
 
 /**
@@ -198,6 +199,7 @@ class Update extends ApiObject
         $this->processCallbackQueries();
         $this->processHashtags();
         $this->processMentions();
+        $this->processTexts();
         
         return $this;
     }
@@ -349,6 +351,33 @@ class Update extends ApiObject
                 
                 return $mention->make($this->bot, $this, $args);
             }
+        }
+        return true;
+    }
+    
+    protected function processTexts()
+    {
+        if ($this->bot->getConfig('process.texts') == false)  return true;
+        
+        if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
+        
+        foreach ($this->bot->getTextsStack()->getStack() as $name => $text) {
+            /**@var TextController $text*/
+            if (array_get($text->getEngagesIn(), $this->getChat()->getType()) == false) continue;
+            
+            if ($text->isStandalone() && strtolower($this->getMessage()->getText()) !== strtolower($name)) continue;
+            
+            if ($text->isCaseSensitive() && strpos($this->getMessage()->getText(), $name) === false) continue;
+            
+            if (!$this->entityInPosition($this->getMessage()->getText(), $text->getPosition(), strpos($this->getMessage()->getText(), $name), strlen($name))) continue;
+            
+            if ($text->isStandalone()) {
+                $args = [];
+            } else {
+                $args = $this->getArgs(substr($this->getMessage()->getText(), strpos($this->getMessage()->getText(), $name) + strlen($name)), $this->bot->getConfig('commands_param_separator')); //intentional
+            }
+            
+            return $text->make($this->bot, $this, $args);
         }
         return true;
     }

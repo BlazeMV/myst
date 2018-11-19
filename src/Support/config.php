@@ -21,7 +21,7 @@ return [
             'process'                       => [
                 'commands'                      => true,
                 'callback_queries'              => true,
-                'text'                          => true,
+                'texts'                         => true,
                 'hashtags'                      => true,
                 'mentions'                      => true,
                 'conversations'                 => true,

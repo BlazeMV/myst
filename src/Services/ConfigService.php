@@ -48,7 +48,7 @@ class ConfigService
 			'process',
 			'process.commands',
 			'process.callback_queries',
-			'process.text',
+			'process.texts',
 			'process.hashtags',
 			'process.mentions',
 		];
@@ -68,7 +68,7 @@ class ConfigService
             'engages_in.channel',
             'process.commands',
             'process.callback_queries',
-            'process.text',
+            'process.texts',
             'process.hashtags',
             'process.mentions',
 		];
