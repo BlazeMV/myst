@@ -54,24 +54,6 @@ class MystCommand extends Command
         }
     }
 
-    protected function getStub($name)
-    {
-        return \File::get(__DIR__."/stubs/$name.stub");
-    }
-
-    protected function fillStub($stub, $name)
-    {
-        return str_ireplace(['DummyName', 'DummyClassName'], [strtolower($name), $name], $stub);
-    }
-
-    protected function makeFile($path, $name, $content)
-    {
-        if (!file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
-        \File::put($path . $name . '.php', $content);
-    }
-
     protected function makeCommand($name)
     {
         $file_path = app_path() . "/Telegram/Commands/";
