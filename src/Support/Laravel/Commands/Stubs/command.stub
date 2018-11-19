@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Telegram\Commands;
+
+use Blaze\Myst\Api\Requests\SendMessage;
+use Blaze\Myst\Controllers\CommandController;
+
+class {classname} extends CommandController
+{
+
+    protected $name = "{name}";
+
+    protected $description = "";
+
+    public function handle($arguments)
+    {
+        $result = $this->replyWith(SendMessage::make()->text('hello'));
+    }
+}

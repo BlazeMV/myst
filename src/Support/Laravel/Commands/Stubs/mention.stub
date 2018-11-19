@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Telegram\Mentions;
+
+use Blaze\Myst\Api\Requests\SendMessage;
+use Blaze\Myst\Controllers\MentionController;
+
+class {classname} extends MentionController
+{
+    protected $name = '{name}';
+
+    protected $description = '';
+
+    protected function handle($arguments)
+    {
+        $this->replyWith(SendMessage::make()->text("responding to @{name} mention"));
+    }
+}

@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Telegram\CallbackQueries;
+
+use Blaze\Myst\Api\Requests\AnswerCallbackQuery;
+use Blaze\Myst\Controllers\CallbackQueryController;
+
+class {classname} extends CallbackQueryController
+{
+    protected $name = '{name}';
+
+    protected $description = '';
+
+    protected function handle($arguments)
+    {
+        $this->replyWith(AnswerCallbackQuery::make()->text("Your answer was recorded"));
+    }
+}

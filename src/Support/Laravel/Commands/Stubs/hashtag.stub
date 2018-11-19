@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Telegram\Hashtags;
+
+use Blaze\Myst\Api\Requests\SendMessage;
+use Blaze\Myst\Controllers\HashtagController;
+
+class {classname} extends HashtagController
+{
+    protected $name = '{name}';
+
+    protected $description = '';
+
+    protected function handle($arguments)
+    {
+        $this->replyWith(SendMessage::make()->text("responding to #{name} hashtag"));
+    }
+}
