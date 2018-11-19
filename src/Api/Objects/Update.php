@@ -7,6 +7,7 @@ use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\CallbackQueryController;
 use Blaze\Myst\Controllers\CommandController;
 use Blaze\Myst\Controllers\HashtagController;
+use Blaze\Myst\Controllers\MentionController;
 use Blaze\Myst\Services\ConversationService;
 
 /**
@@ -196,6 +197,7 @@ class Update extends ApiObject
         $this->processCommands();
         $this->processCallbackQueries();
         $this->processHashtags();
+        $this->processMentions();
         
         return $this;
     }
@@ -310,6 +312,42 @@ class Update extends ApiObject
                 }
                 
                 return $hashtag->make($this->bot, $this, $args);
+            }
+        }
+        return true;
+    }
+    
+    protected function processMentions()
+    {
+        if ($this->bot->getConfig('process.mentions') == false)  return true;
+        
+        if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
+        
+        if (!$this->getMessage()->has('entities')) return true;
+        
+        foreach ($this->bot->getMentionsStack()->getStack() as $name => $mention) {
+            /**@var MentionController $mention*/
+            foreach ($this->getMessage()->getEntities() as $entity) {
+                /**@var Entity $entity*/
+                if ($entity->getType() !== 'mention') continue;
+                
+                if (array_get($mention->getEngagesIn(), $this->getChat()->getType()) == false) continue;
+                
+                if ($mention->isStandalone() && strtolower($this->getMessage()->getText()) !== str_start(strtolower($name), '@')) continue;
+                
+                if (strtolower($entity->getText($this->getMessage()->getText())) !== str_start(strtolower($name), '@')) continue;
+                
+                if ($mention->isCaseSensitive() && $entity->getText($this->getMessage()->getText()) !== str_start($name, '@')) continue;
+                
+                if (!$this->entityInPosition($this->getMessage()->getText(), $mention->getPosition(), $entity->getOffset(), $entity->getLength())) continue;
+                
+                if ($mention->isStandalone()) {
+                    $args = [];
+                } else {
+                    $args = $this->getArgs(substr($this->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $this->bot->getConfig('commands_param_separator')); //intentional
+                }
+                
+                return $mention->make($this->bot, $this, $args);
             }
         }
         return true;

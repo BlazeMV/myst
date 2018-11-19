@@ -6,6 +6,7 @@ use Blaze\Myst\Controllers\Stacks\CallbackQueriesStack;
 use Blaze\Myst\Controllers\Stacks\CommandsStack;
 use Blaze\Myst\Controllers\Stacks\ConversationsStack;
 use Blaze\Myst\Controllers\Stacks\HashtagsStack;
+use Blaze\Myst\Controllers\Stacks\MentionsStack;
 use Blaze\Myst\Exceptions\StackException;
 
 trait StacksHandler
@@ -31,6 +32,11 @@ trait StacksHandler
     protected $hashtags_stack;
     
     /**
+     * @var MentionsStack $mentions_stack
+     */
+    protected $mentions_stack;
+    
+    /**
      * populates all stacks
      *
      * @param array $config
@@ -42,6 +48,7 @@ trait StacksHandler
     	$this->conversations_stack = new ConversationsStack($config['conversations']);
     	$this->callback_queries_stack = new CallbackQueriesStack($config['callback_queries']);
     	$this->hashtags_stack = new HashtagsStack($config['hashtags']);
+    	$this->mentions_stack = new MentionsStack($config['mentions']);
         
         return $this;
     }
@@ -76,5 +83,13 @@ trait StacksHandler
     public function getHashtagsStack(): HashtagsStack
     {
         return $this->hashtags_stack;
+    }
+    
+    /**
+     * @return MentionsStack
+     */
+    public function getMentionsStack(): MentionsStack
+    {
+        return $this->mentions_stack;
     }
 }
