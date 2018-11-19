@@ -214,9 +214,9 @@ class Update extends ApiObject
         
         if ($this->getMessage()->getReplyToMessage()->getId() !== $convo['reply_message_id']) return true;
         
-        if (!isset($this->bot->getConversationsStack()[$convo['name']])) return true;
+        if ($this->bot->getConversationsStack()->getStackItem($convo['name']) === null) return true;
         
-        $conversation = $this->bot->getConversationsStack()[$convo['name']];
+        $conversation = $this->bot->getConversationsStack()->getStackItem($convo['name']);
         
         return $conversation->make($this->bot, $this, $convo);
     }
@@ -229,7 +229,7 @@ class Update extends ApiObject
         
         if (!$this->getMessage()->has('entities')) return true;
         
-        foreach ($this->bot->getCommandsStack() as $name => $command) {
+        foreach ($this->bot->getCommandsStack()->getStack() as $name => $command) {
             /**@var CommandController $command*/
             foreach ($this->getMessage()->getEntities() as $entity) {
                 /**@var Entity $entity*/
@@ -263,7 +263,7 @@ class Update extends ApiObject
     
         if ($this->detectType() !== 'callback_query') return true;
     
-        foreach ($this->bot->getCallbackQueriesStack() as $name => $cbq) {
+        foreach ($this->bot->getCallbackQueriesStack()->getStack() as $name => $cbq) {
             /**@var CallbackQueryController $cbq*/
         
             if (array_get($cbq->getEngagesIn(), $this->getChat()->getType()) == false) continue;
