@@ -35,6 +35,7 @@ trait StacksHandler
     protected function populateStacks(array $config) {
     	$this->populateCommandsStack($config['commands']);
     	$this->populateConversationsStack($config['conversations']);
+    	$this->populateCallbackQueriesStack($config['callback_queries']);
         
         return $this;
     }
@@ -114,11 +115,8 @@ trait StacksHandler
         if (!class_exists($cbq_class)) throw new StackException("class $cbq_class not found.");
         $cbq = new $cbq_class;
         if (!$cbq instanceof CallbackQueryController) throw new StackException("$cbq_class must be an instance of " . CallbackQueryController::class);
-        $names = array_merge($cbq->getAliases(), [$cbq->getName()]);
-        foreach ($names as $name) {
-            if (array_has($this->callback_queries_stack, $name)) throw new StackException("$name has already been registered as a callback query.");
-            $this->callback_queries_stack[$name] = $cbq;
-        }
+        if (array_has($this->callback_queries_stack, $cbq->getName())) throw new StackException($cbq->getName() . " has already been registered as a callback query.");
+        $this->callback_queries_stack[$cbq->getName()] = $cbq;
     }
     
     /**
