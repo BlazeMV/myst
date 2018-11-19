@@ -34,8 +34,8 @@ class ConfigService
 			'token',
 			'async',
 			'process_edited_messages',
-			'commands_param_seperator',
-			'cbq_param_seperator',
+			'commands_param_separator',
+			'cbq_param_separator',
 			'unknown_command_reply_help',
 			'engages_in',
 			'engages_in.private',
@@ -55,8 +55,8 @@ class ConfigService
 		$string = [
 			'username',
 			'token',
-			'commands_param_seperator',
-			'cbq_param_seperator',
+			'commands_param_separator',
+			'cbq_param_separator',
 		];
 		$boolean = [
 			'async',

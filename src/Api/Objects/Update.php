@@ -248,7 +248,7 @@ class Update extends ApiObject
                 if ($command->isStandalone()) {
                     $args = [];
                 } else {
-                    $args = $this->getArgs(substr($this->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $this->bot->getConfig('commands_param_seperator'));
+                    $args = $this->getArgs(substr($this->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $this->bot->getConfig('commands_param_separator'));
                 }
                 
                 return $command->make($this->bot, $this, $args);
@@ -268,9 +268,9 @@ class Update extends ApiObject
         
             if (array_get($cbq->getEngagesIn(), $this->getChat()->getType()) == false) continue;
             
-            if ($this->getCallbackQuery()->getData() !== $name && !starts_with($this->getCallbackQuery()->getData(), $name . $this->bot->getConfig('cbq_param_seperator'))) continue;
+            if ($this->getCallbackQuery()->getData() !== $name && !starts_with($this->getCallbackQuery()->getData(), $name . $this->bot->getConfig('cbq_param_separator'))) continue;
             
-            $args = $this->getArgs(substr($this->getCallbackQuery()->getData(), strlen($name)), $this->bot->getConfig('cbq_param_seperator'));
+            $args = $this->getArgs(substr($this->getCallbackQuery()->getData(), strlen($name)), $this->bot->getConfig('cbq_param_separator'));
         
             return $cbq->make($this->bot, $this, $args);
         }
