@@ -2,6 +2,7 @@
 
 namespace Blaze\Myst\Controllers;
 
+use Blaze\Myst\Api\Requests\AnswerCallbackQuery;
 use Blaze\Myst\Api\Requests\BaseRequest;
 use Blaze\Myst\Api\Requests\SendMessage;
 use Blaze\Myst\Api\Response;
@@ -139,10 +140,21 @@ abstract class BaseController
     /**
      * @param BaseRequest $request
      * @return Response
+     * @throws \Blaze\Myst\Exceptions\ConfigurationException
+     * @throws \Blaze\Myst\Exceptions\HttpException
+     * @throws \Blaze\Myst\Exceptions\RequestException
      */
     public function replyWith(BaseRequest $request)
     {
+        $request->setBot($this->getBot());
+        
         if ($request instanceof SendMessage)
-            return $request->setBot($this->getBot())->to($this->getUpdate()->getChat()->getId())->replyTo($this->getUpdate()->getMessage()->getId())->send();
+            $request->to($this->getUpdate()->getChat()->getId())->replyTo($this->getUpdate()->getMessage()->getId());
+            
+        elseif ($request instanceof AnswerCallbackQuery)
+            $request->to($this->getUpdate()->getCallbackQuery()->getId());
+        
+        
+        return $request->send();
     }
 }
