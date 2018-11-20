@@ -19,7 +19,7 @@ class MystCallbackQuery extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Bot Command at app/Telegram namespace';
+    protected $description = 'Create a new Myst Callback Query Controller at App\Telegram\CallbackQueries namespace';
     
     /**
      * Execute the console command.
@@ -36,6 +36,6 @@ class MystCallbackQuery extends Command
         $name = studly_case($this->argument('name'));
     
         $service->makeStub('callbackquery', $name, $file_path);
-        $this->info("$name Command created at app/Telegram/CallbackQueries");
+        $this->info("$name callback query created at app/Telegram/CallbackQueries");
     }
 }

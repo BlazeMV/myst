@@ -19,7 +19,7 @@ class MystCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Bot Command at app/Telegram namespace';
+    protected $description = 'Create a new Myst Command Controller at App\Telegram\Commands namespace';
     
     /**
      * Execute the console command.
