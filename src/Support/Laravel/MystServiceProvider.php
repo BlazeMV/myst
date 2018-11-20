@@ -8,6 +8,7 @@ use Blaze\Myst\Support\Laravel\Commands\MystCommand;
 use Blaze\Myst\Support\Laravel\Commands\MystConversation;
 use Blaze\Myst\Support\Laravel\Commands\MystHashtag;
 use Blaze\Myst\Support\Laravel\Commands\MystMention;
+use Blaze\Myst\Support\Laravel\Commands\MystText;
 use Illuminate\Support\ServiceProvider;
 
 class MystServiceProvider extends ServiceProvider
@@ -36,6 +37,7 @@ class MystServiceProvider extends ServiceProvider
 			    MystConversation::class,
 			    MystHashtag::class,
 			    MystMention::class,
+			    MystText::class,
             ]);
 		}
 	}
