@@ -6,6 +6,7 @@ use Blaze\Myst\BotsManager;
 use Blaze\Myst\Support\Laravel\Commands\MystCallbackQuery;
 use Blaze\Myst\Support\Laravel\Commands\MystCommand;
 use Blaze\Myst\Support\Laravel\Commands\MystConversation;
+use Blaze\Myst\Support\Laravel\Commands\MystHashtag;
 use Illuminate\Support\ServiceProvider;
 
 class MystServiceProvider extends ServiceProvider
@@ -32,6 +33,7 @@ class MystServiceProvider extends ServiceProvider
 			    MystCommand::class,
 			    MystCallbackQuery::class,
 			    MystConversation::class,
+			    MystHashtag::class,
             ]);
 		}
 	}
