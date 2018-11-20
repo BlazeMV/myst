@@ -45,6 +45,11 @@ abstract class BaseController
         $this->update = $update;
     }
     
+    /**
+     * @param $arguments
+     * @return mixed
+     * @throws \Blaze\Myst\Exceptions\MystException
+     */
     abstract protected function handle($arguments);
     
     /**
