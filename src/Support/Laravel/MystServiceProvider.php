@@ -3,6 +3,7 @@
 namespace Blaze\Myst\Support\Laravel;
 
 use Blaze\Myst\BotsManager;
+use Blaze\Myst\Support\Laravel\Commands\MystCallbackQuery;
 use Blaze\Myst\Support\Laravel\Commands\MystCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,7 +27,10 @@ class MystServiceProvider extends ServiceProvider
 	
 	public function registerCommands(){
 		if ($this->app->runningInConsole()) {
-			$this->commands([MystCommand::class]);
+			$this->commands([
+			    MystCommand::class,
+			    MystCallbackQuery::class,
+            ]);
 		}
 	}
 	
