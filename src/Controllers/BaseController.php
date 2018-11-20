@@ -21,10 +21,19 @@ abstract class BaseController
      */
     protected $update;
     
+    /**
+     * @var string $name Name of this controller
+     */
     protected $name;
     
+    /**
+     * @var string $description Description of this controller
+     */
     protected $description = "";
     
+    /**
+     * @var array $engages_in types of conversations this controller will respond to
+     */
     protected $engages_in = [
         'private'       => true,
         'group'         => true,
@@ -32,6 +41,13 @@ abstract class BaseController
         'channel'       => true
     ];
     
+    /**
+     * @param Bot $bot
+     * @param Update $update
+     * @param array $arguments
+     * @return mixed
+     * @throws \Blaze\Myst\Exceptions\MystException
+     */
     public function make(Bot $bot, Update $update, array $arguments)
     {
         $this->setup($bot, $update);
@@ -39,6 +55,10 @@ abstract class BaseController
         return $this->handle($arguments);
     }
     
+    /**
+     * @param Bot $bot
+     * @param Update $update
+     */
     protected function setup(Bot $bot, Update $update)
     {
         $this->bot = $bot;
