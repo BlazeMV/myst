@@ -4,13 +4,24 @@ namespace Blaze\Myst\Controllers;
 
 abstract class EntitiesController extends BaseController
 {
-    
+    /**
+     * @var array $aliases alternative names to this controller
+     */
     protected $aliases = [];
     
+    /**
+     * @var string $position position of the entity inside the message
+     */
     protected $position = '*';
     
+    /**
+     * @var bool $standalone whether or not the entity text should be the only text in the message
+     */
     protected $standalone = true;
     
+    /**
+     * @var bool $case_sensitive whether or not the entity text should be case sensitive to the name (or aliases) of this controller
+     */
     protected $case_sensitive = false;
     
     /**
