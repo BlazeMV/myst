@@ -2,6 +2,7 @@
 
 namespace Blaze\Myst\Support\Laravel\Commands;
 
+use Blaze\Myst\Services\StubService;
 use Illuminate\Console\Command;
 
 class MystCommand extends Command
@@ -11,73 +12,30 @@ class MystCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'myst:make {controller} {name}';
+    protected $signature = 'myst:command {name}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new Bot Command or CallbackQuery at app/Telegram';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
+    protected $description = 'Create a new Bot Command at app/Telegram namespace';
+    
     /**
      * Execute the console command.
      *
+     * @param StubService $service
      * @return mixed
+     * @throws \Blaze\Myst\Exceptions\ControllerExistsException
+     * @throws \Blaze\Myst\Exceptions\StubException
+     * @throws \ReflectionException
      */
-    public function handle()
-    {
-        switch ($this->argument('controller')){
-            case 'command':
-            case 'cmd':
-                $this->makeCommand($this->argument('name'));
-                break;
-            case 'callbackquery':
-            case 'cbq':
-                $this->makeCallbackQuery($this->argument('name'));
-                break;
-            case 'conversation':
-                $this->makeConversation($this->argument('name'));
-                break;
-            default:
-                $this->error("Unsupported command!");
-        }
-    }
-
-    protected function makeCommand($name)
+    public function handle(StubService $service)
     {
         $file_path = app_path() . "/Telegram/Commands/";
-        $name = studly_case($name);
-
-        $this->makeFile($file_path, $name . 'Command', $this->fillStub($this->getStub('command'), $name));
-        $this->info("New Bot Command created!");
-    }
-
-    protected function makeCallbackQuery($name)
-    {
-        $file_path = app_path() . "/Telegram/CallbackQueries/";
-        $name = studly_case($name);
-
-        $this->makeFile($file_path, $name . 'CallbackQuery', $this->fillStub($this->getStub('callbackquery'), $name));
-        $this->info("New Bot Callback Query created.");
-    }
-
-    protected function makeConversation($name)
-    {
-        $file_path = app_path() . "/Telegram/Conversations/";
-        $name = studly_case($name);
-
-        $this->makeFile($file_path, $name . 'Conversation', $this->fillStub($this->getStub('conversation'), $name));
-        $this->info("New Bot Conversation created.");
+        $name = studly_case($this->argument('name'));
+    
+        $service->makeStub('command', $name, $file_path);
+        $this->info("$name Command created at app/Telegram/Commands");
     }
 }
