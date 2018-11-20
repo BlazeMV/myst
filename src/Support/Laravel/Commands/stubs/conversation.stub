@@ -8,9 +8,15 @@ use Blaze\Myst\Controllers\ConversationController;
 
 class {classname} extends ConversationController
 {
-    protected $name = '{name}';
+    /**
+     * @var string $name Name of this conversation
+     */
+    protected $name = "{name}";
 
-    protected $description = '';
+    /**
+     * @var string $description Description of this conversation
+     */
+    protected $description = "";
 
     public function step1()
     {

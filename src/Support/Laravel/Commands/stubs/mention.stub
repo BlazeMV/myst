@@ -7,10 +7,19 @@ use Blaze\Myst\Controllers\MentionController;
 
 class {classname} extends MentionController
 {
-    protected $name = '{name}';
+    /**
+     * @var string $name Name of this mention
+     */
+    protected $name = "{name}";
 
-    protected $description = '';
+    /**
+     * @var string $description Description of this mention
+     */
+    protected $description = "";
 
+    /**
+     * @inheritdoc
+     */
     protected function handle($arguments)
     {
         $this->replyWith(SendMessage::make()->text("responding to @{name} mention"));

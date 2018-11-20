@@ -7,11 +7,19 @@ use Blaze\Myst\Controllers\CommandController;
 
 class {classname} extends CommandController
 {
-
+    /**
+     * @var string $name Name of this command
+     */
     protected $name = "{name}";
 
+    /**
+     * @var string $description Description of this command
+     */
     protected $description = "";
 
+    /**
+     * @inheritdoc
+     */
     public function handle($arguments)
     {
         $result = $this->replyWith(SendMessage::make()->text('hello'));

@@ -7,10 +7,19 @@ use Blaze\Myst\Controllers\HashtagController;
 
 class {classname} extends HashtagController
 {
-    protected $name = '{name}';
+    /**
+     * @var string $name Name of this hashtag
+     */
+    protected $name = "{name}";
 
-    protected $description = '';
+    /**
+     * @var string $description Description of this hashtag
+     */
+    protected $description = "";
 
+    /**
+     * @inheritdoc
+     */
     protected function handle($arguments)
     {
         $this->replyWith(SendMessage::make()->text("responding to #{name} hashtag"));

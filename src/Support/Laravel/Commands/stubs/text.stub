@@ -7,10 +7,19 @@ use Blaze\Myst\Controllers\TextController;
 
 class {classname} extends TextController
 {
-    protected $name = '{name}';
+    /**
+     * @var string $name Name of this text
+     */
+    protected $name = "{name}";
 
-    protected $description = '';
+    /**
+     * @var string $description Description of this text
+     */
+    protected $description = "";
 
+    /**
+     * @inheritdoc
+     */
     protected function handle($arguments)
     {
         $this->replyWith(SendMessage::make()->text("responding to {$name} message"));

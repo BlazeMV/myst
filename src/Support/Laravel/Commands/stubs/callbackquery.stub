@@ -7,10 +7,19 @@ use Blaze\Myst\Controllers\CallbackQueryController;
 
 class {classname} extends CallbackQueryController
 {
-    protected $name = '{name}';
+    /**
+     * @var string $name Name of this cbq
+     */
+    protected $name = "{name}";
 
-    protected $description = '';
+    /**
+     * @var string $description Description of this cbq
+     */
+    protected $description = "";
 
+    /**
+     * @inheritdoc
+     */
     protected function handle($arguments)
     {
         $this->replyWith(AnswerCallbackQuery::make()->text("Your answer was recorded"));
