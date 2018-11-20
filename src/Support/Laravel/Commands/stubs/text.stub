@@ -22,6 +22,6 @@ class {classname} extends TextController
      */
     protected function handle($arguments)
     {
-        $this->replyWith(SendMessage::make()->text("responding to {$name} message"));
+        $this->replyWith(SendMessage::make()->text("responding to {name} message"));
     }
 }
