@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: blaze
- * Date: 11/20/18
- * Time: 11:40 AM
- */
 
 namespace Blaze\Myst\Services;
 
@@ -25,7 +19,7 @@ class StubService
     public function makeStub($type, $name, $path)
     {
         try {
-            $contents = File::get(substr((new \ReflectionClass(\Blaze\Myst\Bot::class))->getFileName(), 0, -7) ."Support/Laravel/Commands/stubs/$type.stub");
+            $contents = File::get(ConfigService::getPackageAbsolutePath() ."Support/Laravel/Commands/stubs/$type.stub");
     
             $contents = str_replace(['{name}', '{classname}'], [strtolower($name), $name], $contents);
     

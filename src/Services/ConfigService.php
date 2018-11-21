@@ -16,9 +16,23 @@ class ConfigService
 		return 'https://api.telegram.org/bot';
 	}
     
+    /**
+     * returns the key used for caching conversations
+     *
+     * @return string
+     */
     public static function getConversationCacheKey()
     {
         return 'myst_convo';
+	}
+    
+    /**
+     * @return bool|string
+     * @throws \ReflectionException
+     */
+    public static function getPackageAbsolutePath()
+    {
+        return substr((new \ReflectionClass(\Blaze\Myst\Bot::class))->getFileName(), 0, -7);
 	}
 	
 	/**
