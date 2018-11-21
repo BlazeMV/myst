@@ -13,6 +13,7 @@ use Blaze\Myst\Api\ApiObject;
  * @method string getFirstName()
  * @method string getLastName()
  * @method string getDescription()
+ * @method string getAllMembersAreAdmin()
 */
 class Chat extends ApiObject
 {
