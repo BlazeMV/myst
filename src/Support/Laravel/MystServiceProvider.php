@@ -3,6 +3,7 @@
 namespace Blaze\Myst\Support\Laravel;
 
 use Blaze\Myst\BotsManager;
+use Blaze\Myst\Services\ConfigService;
 use Blaze\Myst\Support\Laravel\Commands\MystCallbackQuery;
 use Blaze\Myst\Support\Laravel\Commands\MystCommand;
 use Blaze\Myst\Support\Laravel\Commands\MystConversation;
@@ -13,14 +14,17 @@ use Illuminate\Support\ServiceProvider;
 
 class MystServiceProvider extends ServiceProvider
 {
-	/**
-	 * Boot the service provider.
-	 */
+    /**
+     * Boot the service provider.
+     * @throws \ReflectionException
+     */
 	public function boot()
 	{
 		$this->makeConfig();
 		
 		$this->registerCommands();
+		
+		$this->loadMigrations();
 	}
 	
 	protected function makeConfig()
@@ -29,7 +33,7 @@ class MystServiceProvider extends ServiceProvider
 		$this->publishes([$config_path => config_path('myst.php')], 'Myst');
 	}
 	
-	public function registerCommands(){
+    protected function registerCommands(){
 		if ($this->app->runningInConsole()) {
 			$this->commands([
 			    MystCommand::class,
@@ -53,4 +57,12 @@ class MystServiceProvider extends ServiceProvider
 			return $manager->getActiveBot();
 		});
 	}
+    
+    /**
+     * @throws \ReflectionException
+     */
+    protected function loadMigrations()
+    {
+        $this->loadMigrationsFrom(ConfigService::getPackageAbsolutePath() . 'Support/Laravel/Migrations');
+    }
 }
