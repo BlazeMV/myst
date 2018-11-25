@@ -10,6 +10,10 @@ use Blaze\Myst\Controllers\HashtagController;
 use Blaze\Myst\Controllers\MentionController;
 use Blaze\Myst\Controllers\TextController;
 use Blaze\Myst\Services\ConversationService;
+use Illuminate\Support\Facades\Schema;
+use Blaze\Myst\Support\Laravel\Models\User as MystUser;
+use Blaze\Myst\Support\Laravel\Models\Chat as MystChat;
+use Blaze\Myst\Support\Laravel\Models\ChatMember as MystChatMember;
 
 /**
  * @method CallBackQuery getCallbackQuery()
@@ -190,6 +194,8 @@ class Update extends ApiObject
     
     public function processUpdate()
     {
+        $this->updateDatabase();
+        
         if ($this->detectType() == ('edited_message' || 'edited_channel_post') && $this->bot->getConfig('process_edited_messages') == false) return $this;
         
         if (!$this->bot->getConfig('engages_in.' . $this->getChat()->getType())) return $this;
@@ -202,6 +208,36 @@ class Update extends ApiObject
         $this->processTexts();
         
         return $this;
+    }
+    
+    protected function updateDatabase()
+    {
+        /** @var MystUser $user
+         * @var MystChat $chat
+         * @var MystChatMember $chat_member
+         */
+        
+        if (!Schema::hasTable('myst_users')) return true;
+        if (!Schema::hasTable('myst_chats')) return true;
+        if (!Schema::hasTable('myst_chat_members')) return true;
+        
+        $user = MystUser::find($this->getFrom()->getId());
+        if ($user == null) {
+            $user = new MystUser();
+            $user->id = $this->getFrom()->getId();
+        }
+        $user = $user->updateUser($this->getFrom());
+        
+        $chat = MystChat::find($this->getChat()->getId());
+        if ($chat == null) {
+            $chat = new MystChat();
+            $chat->id = $this->getChat()->getId();
+        }
+        $chat = $chat->updateChat($this->getChat());
+    
+        if (!$user->Chats->contains($chat->id)) {
+            $user->Chats()->save($chat);
+        }
     }
     
     
@@ -362,8 +398,8 @@ class Update extends ApiObject
         if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
         
         foreach ($this->bot->getTextsStack()->getStack() as $name => $text) {
-            /**@var TextController $text*/
             if (array_get($text->getEngagesIn(), $this->getChat()->getType()) == false) continue;
+            if (strpos(strtolower($this->getMessage()->getText()), strtolower($name)) === false) continue;
             
             if ($text->isStandalone() && strtolower($this->getMessage()->getText()) !== strtolower($name)) continue;
             
