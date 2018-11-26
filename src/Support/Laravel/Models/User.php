@@ -4,6 +4,7 @@ namespace Blaze\Myst\Support\Laravel\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Blaze\Myst\Api\Objects\User as TgUser;
+use Blaze\Myst\Api\Objects\Chat as TgChat;
 
 class User extends Model
 {
@@ -11,7 +12,7 @@ class User extends Model
     
     public function Chats()
     {
-        return $this->belongsToMany(Chat::class, 'myst_chat_members', 'user_id', 'chat_id')->as('user_chat')->withTimestamps();
+        return $this->belongsToMany(Chat::class, 'myst_chat_members', 'user_id', 'chat_id')->withPivot('admin')->withTimestamps();
     }
     
     public function ChatMembers()

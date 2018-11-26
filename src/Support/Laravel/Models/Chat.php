@@ -11,7 +11,7 @@ class Chat extends Model
     
     public function Users()
     {
-        return $this->belongsToMany(User::class, 'myst_chat_members', 'chat_id', 'user_id')->as('chat_member')->withTimestamps();
+        return $this->belongsToMany(User::class, 'myst_chat_members', 'chat_id', 'user_id')->withPivot('admin')->withTimestamps();
     }
     
     public function ChatMembers()
