@@ -2,7 +2,6 @@
 
 namespace Blaze\Myst\Api\Requests;
 
-use Blaze\Myst\Api\Objects\Collection;
 use Blaze\Myst\Api\Response;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Exceptions\RequestException;
@@ -176,18 +175,20 @@ abstract class BaseRequest
     }
     
     /**
+     * @param callable|null $async_function
      * @return Response
      * @throws RequestException
      * @throws \Blaze\Myst\Exceptions\ConfigurationException
-     * @throws \Blaze\Myst\Exceptions\HttpException
      */
-    public function send()
+    public function send(callable $async_function = null)
 	{
 	    if ($this->bot === null) throw new RequestException("setBot() method must be called before calling send() method");
 	    
 		$this->prepareRequest();
-		$response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/', $this->getParams(), $this->isAsync());
-		$response->setResponseObject($this->responseObject(), $this->multipleResponseObjects());
+		$response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/', $this->getParams(), $this->isAsync(), $async_function);
+		
+		if ($response->isOk())
+		    $response->setResponseObject($this->responseObject(), $this->multipleResponseObjects());
 		
 		return $response;
 	}
