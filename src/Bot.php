@@ -88,14 +88,14 @@ class Bot
     
     /**
      * @param BaseRequest $request
+     * @param null $async_function
      * @return Api\Response
      * @throws ConfigurationException
-     * @throws Exceptions\HttpException
      * @throws Exceptions\RequestException
      */
-    public function sendRequest(BaseRequest $request)
+    public function sendRequest(BaseRequest $request, $async_function = null)
 	{
 		$request->setBot($this);
-		return $request->send();
+		return $request->send($async_function);
 	}
 }

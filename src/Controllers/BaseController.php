@@ -164,12 +164,12 @@ abstract class BaseController
     
     /**
      * @param BaseRequest $request
+     * @param null $async_function
      * @return Response
      * @throws \Blaze\Myst\Exceptions\ConfigurationException
-     * @throws \Blaze\Myst\Exceptions\HttpException
      * @throws \Blaze\Myst\Exceptions\RequestException
      */
-    public function replyWith(BaseRequest $request)
+    public function replyWith(BaseRequest $request, $async_function = null)
     {
         $request->setBot($this->getBot());
         
@@ -180,6 +180,6 @@ abstract class BaseController
             $request->to($this->getUpdate()->getCallbackQuery()->getId());
         
         
-        return $request->send();
+        return $this->getBot()->sendRequest($request, $async_function);
     }
 }
