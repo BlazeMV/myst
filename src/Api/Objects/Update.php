@@ -3,6 +3,8 @@
 namespace Blaze\Myst\Api\Objects;
 
 use Blaze\Myst\Api\ApiObject;
+use Blaze\Myst\Api\Requests\GetChatAdministrators;
+use Blaze\Myst\Api\Response;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\CallbackQueryController;
 use Blaze\Myst\Controllers\CommandController;
@@ -10,6 +12,8 @@ use Blaze\Myst\Controllers\HashtagController;
 use Blaze\Myst\Controllers\MentionController;
 use Blaze\Myst\Controllers\TextController;
 use Blaze\Myst\Services\ConversationService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Blaze\Myst\Support\Laravel\Models\User as MystUser;
 use Blaze\Myst\Support\Laravel\Models\Chat as MystChat;
@@ -217,17 +221,20 @@ class Update extends ApiObject
          * @var MystChatMember $chat_member
          */
         
+        // check for table existence
         if (!Schema::hasTable('myst_users')) return true;
         if (!Schema::hasTable('myst_chats')) return true;
         if (!Schema::hasTable('myst_chat_members')) return true;
         
+        // create new / update existing user
         $user = MystUser::find($this->getFrom()->getId());
         if ($user == null) {
             $user = new MystUser();
             $user->id = $this->getFrom()->getId();
         }
         $user = $user->updateUser($this->getFrom());
-        
+    
+        // create new / update existing chat
         $chat = MystChat::find($this->getChat()->getId());
         if ($chat == null) {
             $chat = new MystChat();
@@ -235,8 +242,38 @@ class Update extends ApiObject
         }
         $chat = $chat->updateChat($this->getChat());
     
+        // attach chat to a user (create a new chat member) if not already attached
         if (!$user->Chats->contains($chat->id)) {
-            $user->Chats()->save($chat);
+            
+            // check if user is admin of chat
+            if ($this->getChat()->getType() == 'private') {
+                $admin = true;
+            } elseif ($this->getChat()->getAllMembersAreAdministrators()) {
+                $admin = true;
+            } else {
+                $admin = false;
+            }
+            
+            //attach
+            $user->Chats()->attach($chat->id, ['admin' => $admin]);
+        }
+    
+        // update chat admins every 24 hours
+        if (Carbon::parse(MystChatMember::where('chat_id', $this->getChat()->getId())->orderBy('created_at')->first()->updated_at)->lessThan(Carbon::parse('-24 hours'))) {
+    
+            $this->getBot()->sendRequest(GetChatAdministrators::make()->chat($this->getChat()->getId())->async(false), function (Response $response) {
+                if ($response->isOk()) {
+                    $admins = $response->getResponseObject();
+                    foreach ($admins as $admin) {
+                        if ($admin->getStatus() == "creator" || $admin->getStatus() == "administrator") {
+                            ChatMember::where('chat_id', $this->getChat()->getId())->where('user_id', $admin->getUser()->getId())->update(['admin', true]);
+                        } else {
+                            ChatMember::where('chat_id', $this->getChat()->getId())->where('user_id', $admin->getUser()->getId())->update(['admin', false]);
+                        }
+                    }
+                }
+        
+            });
         }
     }
     
@@ -398,6 +435,7 @@ class Update extends ApiObject
         if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
         
         foreach ($this->bot->getTextsStack()->getStack() as $name => $text) {
+            /** @var TextController $text*/
             if (array_get($text->getEngagesIn(), $this->getChat()->getType()) == false) continue;
             if (strpos(strtolower($this->getMessage()->getText()), strtolower($name)) === false) continue;
             

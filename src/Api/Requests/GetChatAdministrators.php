@@ -2,13 +2,13 @@
 
 namespace Blaze\Myst\Api\Requests;
 
-use Blaze\Myst\Api\Objects\User;
+use Blaze\Myst\Api\Objects\ChatMember;
 
 class GetChatAdministrators extends BaseRequest
 {
     protected function responseObject() : string
     {
-        return User::class;
+        return ChatMember::class;
     }
     
     protected function multipleResponseObjects() : bool
