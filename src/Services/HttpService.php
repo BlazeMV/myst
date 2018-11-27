@@ -2,18 +2,12 @@
 
 namespace Blaze\Myst\Services;
 
-use Carbon\Carbon;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ServerException;
-use Blaze\Myst\Exceptions\HttpException;
 use Blaze\Myst\Api\Response;
-use GuzzleHttp\Promise\PromiseInterface;
-use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Handler\CurlMultiHandler;
 use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\RequestOptions;
+use GuzzleHttp\Promise;
 
 /**
  * Used to make requests to APIs and return responses.
@@ -27,9 +21,6 @@ class HttpService
 	 * @var Client $client
 	 */
 	private $client;
-    
-    /** @var PromiseInterface[] Holds promises. */
-    private static $promises = [];
 	
 	/**
 	 * Headers to be set on every request
@@ -55,12 +46,12 @@ class HttpService
      * @param string $url
      * @param array $data
      * @param bool $async
+     * @param callable|null $async_function
      * @return Response
-     * @throws HttpException
      */
-	public function post($url, array $data, $async = false)
+	public function post($url, array $data, $async = false, callable $async_function = null)
 	{
-		return $this->makeRequest('POST', $url, $data, $async);
+		return $this->makeRequest('POST', $url, $data, $async, $async_function);
 	}
     
     /**
@@ -68,25 +59,36 @@ class HttpService
      * @param string $url
      * @param array|null $body
      * @param bool $async
+     * @param callable|null $async_function
      * @return Response
      */
-	private function makeRequest($method, $url, array $body = null, $async = false)
+	private function makeRequest($method, $url, array $body = null, $async = false, callable $async_function = null)
 	{
+	    $curlMultiHandle = new CurlMultiHandler();
 	    $options = [
             'headers'       => $this->headers,
             'form_params'   => $body,
-            'synchronous'   => $async,
+            'synchronous'   => !$async,
+            'handler'       => $curlMultiHandle
         ];
-        
-	    Log::info("Sending request");
+	    
         $promise = $this->client->requestAsync($method, $url, $options);
         $response = null;
         $exception = null;
         $code = -1;
         
         if ($async) {
-            $promise->then(function (ResponseInterface $response) {
-                Log::info("Response received");
+            while (!Promise\is_settled($promise)) {
+                $curlMultiHandle->tick();
+            }
+            
+            $promise->then(function (ResponseInterface $response) use ($async_function, $promise, $options) {
+                if (is_callable($async_function)){
+                    $code = $response->getStatusCode();
+    
+                    $response = new Response($code, $options, $response, $promise, null);
+                    $async_function($response);
+                }
             });
             $code = 0;
         } else {
@@ -102,7 +104,6 @@ class HttpService
             }
         }
         
-        Log::alert("Continuing with execution");
         return new Response($code, $options, $response, $promise, $exception);
 	}
 	
