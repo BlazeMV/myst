@@ -2,9 +2,6 @@
 
 namespace Blaze\Myst\Api;
 
-use Blaze\Myst\Api\Objects\Collection;
-use Blaze\Myst\Api\Objects\Error;
-use Blaze\Myst\Api\Objects\Raw;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -151,7 +148,7 @@ class Response
      * @param bool $multiple
      * @return $this
      */
-    public function setResponseObject($class, bool $multiple)
+    public function setResponseObject($class, bool $multiple = false)
     {
         if (in_array($class, static::$scalar_types)) {
             $this->object = $this->getResponseBody();
