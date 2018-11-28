@@ -30,6 +30,24 @@ class User extends Model
         return $this;
     }
     
+    public function attachToChat($chat, TgChat $tg_chat)
+    {
+        if (!$this->Chats->contains($chat->id)) {
+        
+            // check if user is admin of chat
+            if ($tg_chat->getType() == 'private') {
+                $admin = true;
+            } elseif ($tg_chat->getAllMembersAreAdministrators()) {
+                $admin = true;
+            } else {
+                $admin = false;
+            }
+        
+            //attach
+            $this->Chats()->attach($chat->id, ['admin' => $admin]);
+        }
+    }
+    
     public function getFullName()
     {
         return trim($this->first_name . " " . $this->last_name);

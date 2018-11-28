@@ -16,6 +16,8 @@ use Illuminate\Support\Collection;
  * @method Message getReplyToMessage()
  * @method string getText()
  * @method Collection getEntities()
+ * @method Collection getNewChatMembers()
+ * @method User getLeftChatMember()
  */
 class Message extends ApiObject
 {

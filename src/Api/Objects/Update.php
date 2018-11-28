@@ -13,7 +13,6 @@ use Blaze\Myst\Controllers\MentionController;
 use Blaze\Myst\Controllers\TextController;
 use Blaze\Myst\Services\ConversationService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Blaze\Myst\Support\Laravel\Models\User as MystUser;
 use Blaze\Myst\Support\Laravel\Models\Chat as MystChat;
@@ -242,21 +241,8 @@ class Update extends ApiObject
         }
         $chat = $chat->updateChat($this->getChat());
     
-        // attach chat to a user (create a new chat member) if not already attached
-        if (!$user->Chats->contains($chat->id)) {
-            
-            // check if user is admin of chat
-            if ($this->getChat()->getType() == 'private') {
-                $admin = true;
-            } elseif ($this->getChat()->getAllMembersAreAdministrators()) {
-                $admin = true;
-            } else {
-                $admin = false;
-            }
-            
-            //attach
-            $user->Chats()->attach($chat->id, ['admin' => $admin]);
-        }
+        // attach user to a chat (create a new chat member) if not already attached
+        $user->attachToChat($chat, $this->getChat());
     
         // update chat admins every 24 hours
         if (Carbon::parse(MystChatMember::where('chat_id', $this->getChat()->getId())->orderBy('created_at')->first()->updated_at)->lessThan(Carbon::parse('-24 hours'))) {
@@ -274,6 +260,29 @@ class Update extends ApiObject
                 }
         
             });
+        }
+        
+        if ($this->detectType() == 'message') {
+            if ($this->getMessage()->has('new_chat_members')) {
+                foreach ($this->getMessage()->getNewChatMembers() as $newChatMember) {
+                    /** @var User $newChatMember */
+                    // create new / update existing user
+                    $user = MystUser::find($newChatMember->getId());
+                    if ($user == null) {
+                        $user = new MystUser();
+                        $user->id = $newChatMember->getId();
+                    }
+                    $user = $user->updateUser($newChatMember);
+    
+                    // attach user to a chat (create a new chat member) if not already attached
+                    $user->attachToChat($chat, $this->getChat());
+                }
+            }
+            
+            if ($this->getMessage()->has('left_chat_member')) {
+                $tg_user = $this->getMessage()->getLeftChatMember();
+                MystChatMember::where('user_id', $tg_user->getId())->where('chat_id', $this->getChat()->getId())->delete();
+            }
         }
     }
     
