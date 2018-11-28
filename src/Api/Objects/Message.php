@@ -27,13 +27,15 @@ class Message extends ApiObject
             'forward_from' => User::class,
             'forward_from_chat' => Chat::class,
             'reply_to_message' => Message::class,
+            'left_chat_member' => User::class,
         ];
     }
     
     protected function multipleObjectRelations(): array
     {
         return [
-            'entities' => Entity::class
+            'entities' => Entity::class,
+            'new_chat_members' => User::class,
         ];
     }
 }
