@@ -20,6 +20,6 @@ class ChatMember extends Model
     
     public function Restriction()
     {
-        return $this->morphOne(Restriction::class, 'Restrictable');
+        return $this->morphOne(Restriction::class, 'Restrictable', 'relative_type', 'relative_id', 'id');
     }
 }
