@@ -4,6 +4,7 @@ namespace Blaze\Myst\Api\Objects;
 
 use Blaze\Myst\Api\ApiObject;
 use Blaze\Myst\Api\Requests\GetChatAdministrators;
+use Blaze\Myst\Api\Requests\SendMessage;
 use Blaze\Myst\Api\Response;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\CallbackQueryController;
@@ -199,6 +200,8 @@ class Update extends ApiObject
     {
         $this->updateDatabase();
         
+        if ($this->hasRestrictions()) return $this;
+        
         if ($this->detectType() == ('edited_message' || 'edited_channel_post') && $this->bot->getConfig('process_edited_messages') == false) return $this;
         
         if (!$this->bot->getConfig('engages_in.' . $this->getChat()->getType())) return $this;
@@ -284,6 +287,55 @@ class Update extends ApiObject
                 MystChatMember::where('user_id', $tg_user->getId())->where('chat_id', $this->getChat()->getId())->delete();
             }
         }
+    }
+    
+    public function hasRestrictions()
+    {
+        /** @var MystUser $user
+         * @var MystChat $chat
+         * @var MystChatMember $member
+         */
+        
+        $chat = MystChat::find($this->getChat()->getId());
+        if ($chat == null) return true;
+        if ($chat->Restriction !== null) {
+            if ($chat->Restriction->respond) {
+                $request = SendMessage::make()->to($this->getChat()->getId())->text("Chat Restricted.\nReason: " . $chat->Restriction->reason);
+                if ($this->detectType() == 'message' || $this->detectType() == 'edited_message' || $this->detectType() == 'channel_post' || $this->detectType() == 'edited_channel_post')
+                    $request->replyTo($this->getMessage()->getId());
+                
+                $this->getBot()->sendRequest($request);
+            }
+            return true;
+        }
+        
+        $user = MystUser::find($this->getFrom()->getId());
+        if ($user == null) return true;
+        if ($user->Restriction !== null) {
+            if ($user->Restriction->respond) {
+                $request = SendMessage::make()->to($this->getChat()->getId())->text("User Restricted.\nReason: " . $user->Restriction->reason);
+                if ($this->detectType() == 'message' || $this->detectType() == 'edited_message' || $this->detectType() == 'channel_post' || $this->detectType() == 'edited_channel_post')
+                    $request->replyTo($this->getMessage()->getId());
+            
+                $this->getBot()->sendRequest($request);
+            }
+            return true;
+        }
+    
+        $member = MystChatMember::where('chat_id', $this->getChat()->getId())->where('user_id', $this->getFrom()->getId())->first();
+        if ($member == null) return true;
+        if ($member->Restriction !== null) {
+            if ($member->Restriction->respond) {
+                $request = SendMessage::make()->to($this->getChat()->getId())->text("Chat Member Restricted.\nReason: " . $member->Restriction->reason);
+                if ($this->detectType() == 'message' || $this->detectType() == 'edited_message' || $this->detectType() == 'channel_post' || $this->detectType() == 'edited_channel_post')
+                    $request->replyTo($this->getMessage()->getId());
+            
+                $this->getBot()->sendRequest($request);
+            }
+            return true;
+        }
+        
+        return false;
     }
     
     
