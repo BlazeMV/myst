@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMystRestrictionsTable extends Migration
+class CreateMystRestrictionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -30,6 +30,6 @@ class CreateMystRestrictionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('myst_chat_members');
+        Schema::dropIfExists('myst_restrictions');
     }
 }

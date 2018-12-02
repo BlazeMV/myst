@@ -4,7 +4,7 @@ namespace Blaze\Myst\Support\Laravel\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Restrictions extends Model
+class Restriction extends Model
 {
     protected $table = 'myst_restrictions';
     
