@@ -19,6 +19,11 @@ class Chat extends Model
         return $this->hasMany(ChatMember::class, 'chat_id', 'id');
     }
     
+    public function Restriction()
+    {
+        return $this->morphOne(Restrictions::class, 'Restrictable');
+    }
+    
     public function Admins(){
         return $this->ChatMembers()->where('admin', 1);
     }

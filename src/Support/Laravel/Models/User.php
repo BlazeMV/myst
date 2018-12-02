@@ -20,6 +20,11 @@ class User extends Model
         return $this->hasMany(ChatMember::class, 'user_id', 'id');
     }
     
+    public function Restriction()
+    {
+        return $this->morphOne(Restrictions::class, 'Restrictable');
+    }
+    
     public function updateUser(TgUser $user){
         $this->first_name = $user->getFirstName();
         $this->last_name = $user->getLastName();

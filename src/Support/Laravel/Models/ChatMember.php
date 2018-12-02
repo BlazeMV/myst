@@ -17,4 +17,9 @@ class ChatMember extends Model
     {
         return $this->belongsTo(Chat::class, 'chat_id', 'id');
     }
+    
+    public function Restriction()
+    {
+        return $this->morphOne(Restrictions::class, 'Restrictable');
+    }
 }
