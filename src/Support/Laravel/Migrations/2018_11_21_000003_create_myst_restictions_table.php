@@ -18,6 +18,7 @@ class CreateMystRestrictionsTable extends Migration
             $table->integer('relative_id');
             $table->string('relative_type');
             $table->string('reason');
+            $table->boolean('respond')->default(0);
             $table->timestamps();
         });
     }
