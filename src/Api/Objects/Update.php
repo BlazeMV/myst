@@ -295,6 +295,9 @@ class Update extends ApiObject
          * @var MystChat $chat
          * @var MystChatMember $member
          */
+    
+        // check for table existence
+        if (!Schema::hasTable('myst_restrictions')) return false;
         
         $chat = MystChat::find($this->getChat()->getId());
         if ($chat == null) return true;
