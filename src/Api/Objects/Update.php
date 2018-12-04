@@ -364,38 +364,19 @@ class Update extends ApiObject
         return $conversation->make($this->bot, $this, $convo);
     }
     
+    /**
+     * @return bool
+     * @throws \Blaze\Myst\Exceptions\ConfigurationException
+     * @throws \Blaze\Myst\Exceptions\MystException
+     */
     protected function processCommands()
     {
         if ($this->bot->getConfig('process.commands') == false)  return true;
-        
         if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
-        
         if (!$this->getMessage()->has('entities')) return true;
         
         foreach ($this->bot->getCommandsStack()->getStack() as $name => $command) {
-            /**@var CommandController $command*/
-            foreach ($this->getMessage()->getEntities() as $entity) {
-                /**@var Entity $entity*/
-                if ($entity->getType() !== 'bot_command') continue;
-    
-                if (array_get($command->getEngagesIn(), $this->getChat()->getType()) == false) continue;
-    
-                if ($command->isStandalone() && strtolower($this->getMessage()->getText()) !== str_start(strtolower($name), '/')) continue;
-                
-                if (strtolower($entity->getText($this->getMessage()->getText())) !== str_start(strtolower($name), '/')) continue;
-                
-                if ($command->isCaseSensitive() && $entity->getText($this->getMessage()->getText()) !== str_start($name, '/')) continue;
-                
-                if (!$this->entityInPosition($this->getMessage()->getText(), $command->getPosition(), $entity->getOffset(), $entity->getLength())) continue;
-                
-                if ($command->isStandalone()) {
-                    $args = [];
-                } else {
-                    $args = $this->getArgs(substr($this->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $this->bot->getConfig('commands_param_separator'));
-                }
-                
-                return $command->make($this->bot, $this, $args);
-            }
+            $command->make($this);
         }
         return true;
     }
