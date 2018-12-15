@@ -44,18 +44,14 @@ abstract class BaseController
     /**
      * @param Update $update
      * @return mixed
-     * @throws \Blaze\Myst\Exceptions\MystException
      */
     public function make(Update $update)
     {
         $this->setup($update);
         
-        if ($this->ratify()) {
-            $arguments = [];
-            return $this->handle($arguments);
-        }
+        $this->handle();
             
-        return null;
+        return $this;
     }
     
     /**
@@ -68,18 +64,9 @@ abstract class BaseController
     }
     
     /**
-     * checks whether this controller's handle method should be called or not.
-     *
-     * @return bool
-     */
-    abstract protected function ratify() : bool;
-    
-    /**
-     * @param $arguments
      * @return mixed
-     * @throws \Blaze\Myst\Exceptions\MystException
      */
-    abstract protected function handle($arguments);
+    abstract protected function handle();
     
     /**
      * @return Bot
@@ -163,19 +150,12 @@ abstract class BaseController
         return [];
     }
     
-    protected function canEngageIn($type)
-    {
-        $all = array_merge($this->getEngagesIn(), $this->engagesIn());
-        
-        return (array_has($all, $type) && $all[$type] == true);
-    }
-    
     /**
      * @return array
      */
     public function getEngagesIn(): array
     {
-        return $this->engages_in;
+        return array_merge($this->engages_in, $this->engagesIn());
     }
     
     /**
@@ -186,6 +166,14 @@ abstract class BaseController
     {
         $this->engages_in = $engages_in;
         return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function prefix()
+    {
+        return '';
     }
     
     /**

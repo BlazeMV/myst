@@ -2,6 +2,8 @@
 
 namespace Blaze\Myst\Controllers\Stacks;
 
+use Blaze\Myst\Api\Objects\Update;
+use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\BaseController;
 use Blaze\Myst\Controllers\HashtagController;
 use Blaze\Myst\Exceptions\StackException;
@@ -20,5 +22,20 @@ class HashtagsStack extends BaseStack
             $this->items[$name] = $item;
         }
         return $item;
+    }
+    
+    public function processStack(Update $update)
+    {
+        return true;
+    }
+    
+    protected function checkStackPrerequisites(Bot $bot, Update $update): bool
+    {
+        return true;
+    }
+    
+    protected function checkItemPrerequisites(Bot $bot, Update $update, BaseController $item): bool
+    {
+        return true;
     }
 }

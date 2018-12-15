@@ -9,18 +9,25 @@ use Carbon\Carbon;
 
 abstract class ConversationController extends BaseController
 {
+    protected $step;
+    
     /**
      * @var ConversationService $conversation_service
     */
     protected $conversation_service;
     
-    public function make(Bot $bot, Update $update, array $conversation)
+    public function make(Update $update)
     {
-        $this->setup($bot, $update);
-        $this->conversation_service = new ConversationService();
+        $this->setup($update);
+        
+        if ($this->conversation_service == null) $this->conversation_service = new ConversationService();
+            
+        $this->step = $this->getConversation()['step'];
     
-        $this->handle($conversation['step']);
+        $this->handle();
+    
         return $this;
+        
     }
     
     protected function getConversationService()
@@ -45,14 +52,15 @@ abstract class ConversationController extends BaseController
             
             ],
         ];
-        $conversation_service = new ConversationService();
-        $conversation_service->putConversation($update->getChat()->getId(), $update->getFrom()->getId(), $convo);
+        $self->conversation_service = new ConversationService();
+        $self->conversation_service->putConversation($update->getChat()->getId(), $update->getFrom()->getId(), $convo);
         
-        return $self->make($update->getBot(), $update, $convo);
+        return $self->make($update);
     }
     
-    protected function handle($step)
+    protected function handle()
     {
+        $step = $this->getStep();
         return $this->{'step' . $step}();
     }
     
@@ -65,6 +73,11 @@ abstract class ConversationController extends BaseController
         $this->getConversationService()->putConversation($this->getUpdate()->getChat()->getId(), $this->getUpdate()->getFrom()->getId(), $convo);
         
         return $this;
+    }
+    
+    public function getStep()
+    {
+        return $this->step;
     }
     
     public function saveResponse()

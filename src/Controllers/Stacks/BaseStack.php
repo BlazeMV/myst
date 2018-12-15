@@ -2,6 +2,8 @@
 
 namespace Blaze\Myst\Controllers\Stacks;
 
+use Blaze\Myst\Api\Objects\Update;
+use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\BaseController;
 
 abstract class BaseStack implements StackInterface
@@ -10,6 +12,7 @@ abstract class BaseStack implements StackInterface
      * @var array $items
      */
     protected $items = [];
+    
     
     /**
      * BaseStack constructor.
@@ -20,6 +23,7 @@ abstract class BaseStack implements StackInterface
     {
         $this->populateStack($items);
     }
+    
     
     /**
      * @inheritdoc
@@ -32,6 +36,7 @@ abstract class BaseStack implements StackInterface
         return $this;
     }
     
+    
     /**
      * @inheritdoc
      */
@@ -39,6 +44,7 @@ abstract class BaseStack implements StackInterface
     {
         return $this->items;
     }
+    
     
     /**
      * @inheritdoc
@@ -48,4 +54,12 @@ abstract class BaseStack implements StackInterface
         if (array_has($this->items, $name)) return $this->items[$name];
         return null;
     }
+    
+    
+    /**
+     * @param Bot $bot
+     * @param Update $update
+     * @return bool
+     */
+    abstract protected function checkStackPrerequisites(Bot $bot, Update $update): bool;
 }
