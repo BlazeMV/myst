@@ -76,15 +76,16 @@ class BotsManager {
 		
 		return $config;
 	}
-	
-	/**
-	 * Make the bot instance.
-	 *
-	 * @param string $name
-	 *
-	 * @return Bot
-	 * @throws ConfigurationException
-	 */
+    
+    /**
+     * Make the bot instance.
+     *
+     * @param string $name
+     *
+     * @return Bot
+     * @throws ConfigurationException
+     * @throws Exceptions\StackException
+     */
 	protected function makeBot($name)
 	{
 		$config = $this->getBotConfig($name);
@@ -93,15 +94,16 @@ class BotsManager {
 		
 		return $bot;
 	}
-	
-	/**
-	 * Get a bot instance.
-	 *
-	 * @param string $name
-	 *
-	 * @return Bot
-	 * @throws ConfigurationException
-	 */
+    
+    /**
+     * Get a bot instance.
+     *
+     * @param string $name
+     *
+     * @return Bot
+     * @throws ConfigurationException
+     * @throws Exceptions\StackException
+     */
 	public function getActiveBot($name = null)
 	{
 		$name = $name ?: $this->getDefaultBotName();
@@ -112,16 +114,17 @@ class BotsManager {
 		
 		return $this->bots[$name];
 	}
-	
-	/**
-	 * Call default bot's methods
-	 *
-	 * @param string $method
-	 * @param array $parameters
-	 *
-	 * @return mixed
-	 * @throws ConfigurationException
-	 */
+    
+    /**
+     * Call default bot's methods
+     *
+     * @param string $method
+     * @param array $parameters
+     *
+     * @return mixed
+     * @throws ConfigurationException
+     * @throws Exceptions\StackException
+     */
 	public function __call($method, $parameters)
 	{
 		return call_user_func_array([$this->getActiveBot(), $method], $parameters);
