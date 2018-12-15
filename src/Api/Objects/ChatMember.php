@@ -5,7 +5,7 @@ namespace Blaze\Myst\Api\Objects;
 use Blaze\Myst\Api\ApiObject;
 
 /**
- * @method int getUser()
+ * @method User getUser()
  * @method string getStatus()
 */
 class ChatMember extends ApiObject
