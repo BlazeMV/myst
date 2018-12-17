@@ -35,7 +35,7 @@ class ConfigService
         return substr((new \ReflectionClass(\Blaze\Myst\Bot::class))->getFileName(), 0, -7);
 	}
     
-    public function getDatabaseConnection()
+    public static function getDatabaseConnection()
     {
         return config('myst.db_connection');
 	}
