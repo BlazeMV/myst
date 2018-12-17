@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Schema;
 use Blaze\Myst\Exceptions\MystException;
 use Blaze\Myst\Api\Requests\SendMessage;
 use Blaze\Myst\Api\Requests\GetChatAdministrators;
-use Blaze\Myst\Support\Laravel\Models\User as MystUser;
-use Blaze\Myst\Support\Laravel\Models\Chat as MystChat;
-use Blaze\Myst\Support\Laravel\Models\ChatMember as MystChatMember;
+use Blaze\Myst\Laravel\Models\User as MystUser;
+use Blaze\Myst\Laravel\Models\Chat as MystChat;
+use Blaze\Myst\Laravel\Models\ChatMember as MystChatMember;
 
 trait UpdateHandler
 {

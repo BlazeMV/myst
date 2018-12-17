@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaze\Myst\Support\Laravel\Models;
+namespace Blaze\Myst\Laravel\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Blaze\Myst\Api\Objects\User as TgUser;

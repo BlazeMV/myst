@@ -19,7 +19,7 @@ class StubService
     public function makeStub($type, $name, $path)
     {
         try {
-            $contents = File::get(ConfigService::getPackageAbsolutePath() ."Support/Laravel/Commands/stubs/$type.stub");
+            $contents = File::get(ConfigService::getPackageAbsolutePath() ."Laravel/Commands/stubs/$type.stub");
     
             $contents = str_replace(['{name}', '{classname}'], [strtolower($name), $name], $contents);
     

@@ -1,25 +1,25 @@
 <?php
 
-namespace Blaze\Myst\Support\Laravel\Commands;
+namespace Blaze\Myst\Laravel\Commands;
 
 use Blaze\Myst\Services\StubService;
 use Illuminate\Console\Command;
 
-class MystText extends Command
+class MystHashtag extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'myst:text {name}';
+    protected $signature = 'myst:hashtag {name}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new Myst Text Controller at App\Telegram\Texts namespace';
+    protected $description = 'Create a new Myst Hashtag Controller at App\Telegram\Hashtags namespace';
     
     /**
      * Execute the console command.
@@ -32,10 +32,10 @@ class MystText extends Command
      */
     public function handle(StubService $service)
     {
-        $file_path = app_path() . "/Telegram/Texts/";
+        $file_path = app_path() . "/Telegram/Hashtags/";
         $name = studly_case($this->argument('name'));
     
-        $service->makeStub('text', $name, $file_path);
-        $this->info("$name text created at app/Telegram/Texts");
+        $service->makeStub('hashtag', $name, $file_path);
+        $this->info("$name hashtag created at app/Telegram/Hashtags");
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaze\Myst\Support\Laravel\Commands;
+namespace Blaze\Myst\Laravel\Commands;
 
 use Blaze\Myst\Services\StubService;
 use Illuminate\Console\Command;

@@ -1,15 +1,15 @@
 <?php
 
-namespace Blaze\Myst\Support\Laravel;
+namespace Blaze\Myst\Laravel;
 
 use Blaze\Myst\BotsManager;
 use Blaze\Myst\Services\ConfigService;
-use Blaze\Myst\Support\Laravel\Commands\MystCallbackQuery;
-use Blaze\Myst\Support\Laravel\Commands\MystCommand;
-use Blaze\Myst\Support\Laravel\Commands\MystConversation;
-use Blaze\Myst\Support\Laravel\Commands\MystHashtag;
-use Blaze\Myst\Support\Laravel\Commands\MystMention;
-use Blaze\Myst\Support\Laravel\Commands\MystText;
+use Blaze\Myst\Laravel\Commands\MystCallbackQuery;
+use Blaze\Myst\Laravel\Commands\MystCommand;
+use Blaze\Myst\Laravel\Commands\MystConversation;
+use Blaze\Myst\Laravel\Commands\MystHashtag;
+use Blaze\Myst\Laravel\Commands\MystMention;
+use Blaze\Myst\Laravel\Commands\MystText;
 use Illuminate\Support\ServiceProvider;
 
 class MystServiceProvider extends ServiceProvider
@@ -65,6 +65,6 @@ class MystServiceProvider extends ServiceProvider
      */
     protected function loadMigrations()
     {
-        $this->loadMigrationsFrom(ConfigService::getPackageAbsolutePath() . 'Support/Laravel/Migrations');
+        $this->loadMigrationsFrom(ConfigService::getPackageAbsolutePath() . 'Laravel/Migrations');
     }
 }

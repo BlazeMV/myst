@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaze\Myst\Support\Laravel\Models;
+namespace Blaze\Myst\Laravel\Models;
 
 use Blaze\Myst\Api\Objects\Chat as TgChat;
 use Blaze\Myst\Services\ConfigService;
