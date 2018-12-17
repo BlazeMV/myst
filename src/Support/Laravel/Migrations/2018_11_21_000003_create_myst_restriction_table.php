@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Blaze\Myst\Services\ConfigService;
 
 class CreateMystRestrictionTable extends Migration
 {
@@ -13,7 +14,7 @@ class CreateMystRestrictionTable extends Migration
      */
     public function up()
     {
-        Schema::create('myst_restrictions', function (Blueprint $table) {
+        Schema::connection(ConfigService::getDatabaseConnection())->create('myst_restrictions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('relative_id');
             $table->string('relative_type');
@@ -30,6 +31,6 @@ class CreateMystRestrictionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('myst_restrictions');
+        Schema::connection(ConfigService::getDatabaseConnection())->dropIfExists('myst_restrictions');
     }
 }

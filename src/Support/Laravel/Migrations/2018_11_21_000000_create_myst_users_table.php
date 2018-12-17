@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Blaze\Myst\Services\ConfigService;
 
 class CreateMystUsersTable extends Migration
 {
@@ -13,7 +14,7 @@ class CreateMystUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('myst_users', function (Blueprint $table) {
+        Schema::connection(ConfigService::getDatabaseConnection())->create('myst_users', function (Blueprint $table) {
             $table->integer('id');
             $table->primary('id');
             $table->boolean('is_bot');
@@ -32,6 +33,6 @@ class CreateMystUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('myst_users');
+        Schema::connection(ConfigService::getDatabaseConnection())->dropIfExists('myst_users');
     }
 }

@@ -3,11 +3,17 @@
 namespace Blaze\Myst\Support\Laravel\Models;
 
 use Blaze\Myst\Api\Objects\Chat as TgChat;
+use Blaze\Myst\Services\ConfigService;
 use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
     protected $table = 'myst_chats';
+    
+    public function getConnectionName()
+    {
+        return ConfigService::getDatabaseConnection();
+    }
     
     public function Users()
     {

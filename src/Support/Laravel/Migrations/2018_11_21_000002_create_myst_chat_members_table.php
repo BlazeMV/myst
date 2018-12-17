@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Blaze\Myst\Services\ConfigService;
 
 class CreateMystChatMembersTable extends Migration
 {
@@ -13,7 +14,7 @@ class CreateMystChatMembersTable extends Migration
      */
     public function up()
     {
-        Schema::create('myst_chat_members', function (Blueprint $table) {
+        Schema::connection(ConfigService::getDatabaseConnection())->create('myst_chat_members', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->foreign('user_id')->references('id')->on('myst_users')->onDelete('cascade');
@@ -31,6 +32,6 @@ class CreateMystChatMembersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('myst_chat_members');
+        Schema::connection(ConfigService::getDatabaseConnection())->dropIfExists('myst_chat_members');
     }
 }

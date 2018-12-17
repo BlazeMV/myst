@@ -5,10 +5,16 @@ namespace Blaze\Myst\Support\Laravel\Models;
 use Illuminate\Database\Eloquent\Model;
 use Blaze\Myst\Api\Objects\User as TgUser;
 use Blaze\Myst\Api\Objects\Chat as TgChat;
+use Blaze\Myst\Services\ConfigService;
 
 class User extends Model
 {
     protected $table = 'myst_users';
+    
+    public function getConnectionName()
+    {
+        return ConfigService::getDatabaseConnection();
+    }
     
     public function Chats()
     {
