@@ -45,5 +45,6 @@ return [
 			
 			]
 		]
-	]
+	],
+    'db_connection' => env('MYST_DB_CONNECTION', env('DB_CONNECTION', 'mysql'))
 ];
