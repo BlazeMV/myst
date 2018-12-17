@@ -4,6 +4,7 @@ namespace Blaze\Myst\Traits;
 
 use Blaze\Myst\Api\Objects\ChatMember;
 use Blaze\Myst\Api\Objects\User;
+use Blaze\Myst\Services\ConfigService;
 use Carbon\Carbon;
 use Blaze\Myst\Api\Response;
 use Blaze\Myst\Api\Objects\Update;
@@ -37,8 +38,13 @@ trait UpdateHandler
     {
         $update = $this->getWebhookUpdate();
     
-        $this->updateDatabase($update);
-        if ($this->hasRestrictions($update)) return $update;
+        if (ConfigService::shouldMaintainDatabase()) {
+            $this->updateDatabase($update);
+            
+            if ($this->hasRestrictions($update)) {
+                return $update;
+            }
+        }
         
         if (is_callable($pre_function)){
             $pre_function($update);

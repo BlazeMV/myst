@@ -35,9 +35,24 @@ class ConfigService
         return substr((new \ReflectionClass(\Blaze\Myst\Bot::class))->getFileName(), 0, -7);
 	}
     
+    /**
+     * get the name of db connection from myst config
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
     public static function getDatabaseConnection()
     {
         return config('myst.db_connection');
+	}
+    
+    /**
+     *  whether database functions be maintained by the package
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    public static function shouldMaintainDatabase()
+    {
+        return config('myst.maintain_db');
 	}
 	
 	/**

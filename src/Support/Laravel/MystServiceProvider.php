@@ -24,7 +24,9 @@ class MystServiceProvider extends ServiceProvider
 		
 		$this->registerCommands();
 		
-		$this->loadMigrations();
+		if (ConfigService::shouldMaintainDatabase()) {
+		    $this->loadMigrations();
+        }
 	}
 	
 	protected function makeConfig()

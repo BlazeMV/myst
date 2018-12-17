@@ -46,5 +46,6 @@ return [
 			]
 		]
 	],
+    'maintain_db' => true,
     'db_connection' => env('MYST_DB_CONNECTION', env('DB_CONNECTION', 'mysql'))
 ];
