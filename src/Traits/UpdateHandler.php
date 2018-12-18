@@ -70,8 +70,7 @@ trait UpdateHandler
         $this->getCallbackQueriesStack()->processStack($update);
         $this->getHashtagsStack()->processStack($update);
         $this->getMentionsStack()->processStack($update);
-        
-//        $this->processTexts();
+        $this->getTextsStack()->processStack($update);
         
         return true;
     }
