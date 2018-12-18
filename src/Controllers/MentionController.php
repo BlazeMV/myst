@@ -8,4 +8,10 @@ abstract class MentionController extends EntitiesController
     {
         return false;   //forcing mentions to be case insensitive
     }
+    
+    
+    public function prefix()
+    {
+        return '@';
+    }
 }

@@ -69,9 +69,8 @@ trait UpdateHandler
         $this->getCommandsStack()->processStack($update);
         $this->getCallbackQueriesStack()->processStack($update);
         $this->getHashtagsStack()->processStack($update);
+        $this->getMentionsStack()->processStack($update);
         
-//        $this->processHashtags();
-//        $this->processMentions();
 //        $this->processTexts();
         
         return true;
