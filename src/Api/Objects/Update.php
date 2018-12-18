@@ -139,20 +139,6 @@ class Update extends ApiObject
         return $this->getMessage() === null ? null : $this->getMessage()->getFrom();
     }
     
-    
-    protected function processCallbackQueries()
-    {
-        if ($this->bot->getConfig('process.callback_queries') == false)  return true;
-        if ($this->detectType() !== 'callback_query') return true;
-    
-        foreach ($this->bot->getCallbackQueriesStack()->getStack() as $name => $cbq) {
-            /**@var CallbackQueryController $cbq*/
-            
-            $cbq->make($this);
-        }
-        return true;
-    }
-    
     protected function processHashtags()
     {
         if ($this->bot->getConfig('process.hashtags') == false)  return true;
