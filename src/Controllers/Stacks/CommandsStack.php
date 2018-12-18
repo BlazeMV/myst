@@ -48,13 +48,13 @@ class CommandsStack extends BaseStack
         foreach ($this->getStack() as $name => $command) {
             /** @var CommandController $command */
             
-            $entity = $this->checkItemPrerequisites($bot, $update, $command, $name);
+            $entity = $this->checkItemPrerequisites($update, $command, $name);
             
             if (!$entity) {
                 continue;
             }
             
-            $command->setArguments(substr($update->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $update->getBot()->getConfig('commands_param_separator'))->make($update);
+            $command->setArguments(substr($update->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $bot->getConfig('commands_param_separator'))->make($update);
         }
         
         return true;
@@ -85,13 +85,12 @@ class CommandsStack extends BaseStack
     
     
     /**
-     * @param Bot $bot
      * @param Update $update
-     * @param BaseController $command
+     * @param CommandController $command
      * @param string $name
      * @return bool|Entity
      */
-    protected function checkItemPrerequisites(Bot $bot, Update $update, BaseController $command, string $name)
+    protected function checkItemPrerequisites(Update $update, CommandController $command, string $name)
     {
         if (!Arr::isValueTrue($command->getEngagesIn(), $update->getChat()->getType())) {
             return false;
@@ -103,7 +102,7 @@ class CommandsStack extends BaseStack
             return false;
         }
     
-        $entity = $message->getEntities()->filter(function (Entity $entity, $key) use ($message, $name, $command){
+        $entity = $message->getEntities()->filter(function (Entity $entity) use ($message, $name, $command){
             if ($entity->getType() !== 'bot_command') {
                 return false;
             }
