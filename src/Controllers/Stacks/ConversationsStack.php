@@ -34,7 +34,7 @@ class ConversationsStack extends BaseStack
         $conversationService = new ConversationService();
         if (!$conversationService->hasConversation($update->getChat()->getId(), $update->getFrom()->getId())) return false;
     
-        $convo = $conversationService->getConversation($this->getChat()->getId(), $this->getFrom()->getId());
+        $convo = $conversationService->getConversation($update->getChat()->getId(), $update->getFrom()->getId());
         if ($update->getMessage()->getReplyToMessage()->getId() !== $convo['reply_message_id']) return false;
     
         $conversation = $this->getStackItem($convo['name']);
