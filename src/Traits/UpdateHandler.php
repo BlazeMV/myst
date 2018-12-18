@@ -68,8 +68,8 @@ trait UpdateHandler
         $this->getConversationsStack()->processStack($update);
         $this->getCommandsStack()->processStack($update);
         $this->getCallbackQueriesStack()->processStack($update);
-    
-//        $this->processCallbackQueries();
+        $this->getHashtagsStack()->processStack($update);
+        
 //        $this->processHashtags();
 //        $this->processMentions();
 //        $this->processTexts();

@@ -2,11 +2,14 @@
 
 namespace Blaze\Myst\Controllers\Stacks;
 
+use Blaze\Myst\Api\Objects\Entity;
 use Blaze\Myst\Api\Objects\Update;
 use Blaze\Myst\Bot;
 use Blaze\Myst\Controllers\BaseController;
 use Blaze\Myst\Controllers\HashtagController;
 use Blaze\Myst\Exceptions\StackException;
+use Blaze\Myst\Helpers\Arr;
+use Blaze\Myst\Helpers\Str;
 
 class HashtagsStack extends BaseStack
 {
@@ -24,18 +27,90 @@ class HashtagsStack extends BaseStack
         return $item;
     }
     
+    
+    /**
+     * @inheritdoc
+     * @throws \Blaze\Myst\Exceptions\ConfigurationException
+     */
     public function processStack(Update $update)
     {
+        $bot = $update->getBot();
+        
+        if (!$this->checkStackPrerequisites($bot, $update)) {
+            return false;
+        }
+        
+        foreach ($this->getStack() as $name => $hashtag) {
+            /** @var HashtagController $hashtag */
+            
+            $entity = $this->checkItemPrerequisites($update, $hashtag, $name);
+            
+            if (!$entity) {
+                continue;
+            }
+    
+            $hashtag->make($update);
+        }
+        
         return true;
     }
     
+    
+    /**
+     * @inheritdoc
+     * @throws \Blaze\Myst\Exceptions\ConfigurationException
+     */
     protected function checkStackPrerequisites(Bot $bot, Update $update): bool
     {
+        if ($bot->getConfig('process.hashtags') == false)  {
+            return false;
+        }
+        
+        $type = $update->detectType();
+        if ($type !== 'message' && $type !== 'edited_message' && $type !== 'channel_post' && $type !== 'edited_channel_post') {
+            return false;
+        }
+        
+        if (!$update->getMessage()->has('entities')) {
+            return false;
+        }
+        
         return true;
     }
     
-    protected function checkItemPrerequisites(Bot $bot, Update $update, BaseController $item): bool
+    
+    /**
+     * @param Update $update
+     * @param HashtagController $hashtag
+     * @param string $name
+     * @return bool|Entity
+     */
+    protected function checkItemPrerequisites(Update $update, HashtagController $hashtag, string $name)
     {
-        return true;
+        if (!Arr::isValueTrue($hashtag->getEngagesIn(), $update->getChat()->getType())) {
+            return false;
+        }
+        
+        $message = $update->getMessage();
+        
+        if ($hashtag->isStandalone() && !Str::compareCaseInsensitive($message->getText(), str_start($name, $hashtag->prefix()))) {
+            return false;
+        }
+        
+        $entity = $message->getEntities()->filter(function (Entity $entity) use ($message, $name, $hashtag){
+            if ($entity->getType() !== 'hashtag') {
+                return false;
+            }
+            if (!Str::compareCaseInsensitive($entity->getText($message->getText()), str_start($name, $hashtag->prefix()))) {
+                return false;
+            }
+            if (!$entity->inPosition($message->getText(), $hashtag->getPosition())) {
+                return false;
+            }
+            
+            return true;
+        })->first();
+        
+        return $entity;
     }
 }

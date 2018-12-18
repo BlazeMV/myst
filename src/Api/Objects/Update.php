@@ -139,40 +139,6 @@ class Update extends ApiObject
         return $this->getMessage() === null ? null : $this->getMessage()->getFrom();
     }
     
-    protected function processHashtags()
-    {
-        if ($this->bot->getConfig('process.hashtags') == false)  return true;
-        if ($this->detectType() !== 'message' && $this->detectType() !== 'edited_message' && $this->detectType() !== 'channel_post' && $this->detectType() !== 'edited_channel_post') return true;
-        if (!$this->getMessage()->has('entities')) return true;
-        
-        foreach ($this->bot->getHashtagsStack()->getStack() as $name => $hashtag) {
-            /**@var HashtagController $hashtag*/
-            foreach ($this->getMessage()->getEntities() as $entity) {
-                /**@var Entity $entity*/
-                if ($entity->getType() !== 'hashtag') continue;
-                
-                if (array_get($hashtag->getEngagesIn(), $this->getChat()->getType()) == false) continue;
-                
-                if ($hashtag->isStandalone() && strtolower($this->getMessage()->getText()) !== str_start(strtolower($name), '#')) continue;
-                
-                if (strtolower($entity->getText($this->getMessage()->getText())) !== str_start(strtolower($name), '#')) continue;
-                
-                if ($hashtag->isCaseSensitive() && $entity->getText($this->getMessage()->getText()) !== str_start($name, '#')) continue;
-                
-                if (!$this->entityInPosition($this->getMessage()->getText(), $hashtag->getPosition(), $entity->getOffset(), $entity->getLength())) continue;
-                
-                if ($hashtag->isStandalone()) {
-                    $args = [];
-                } else {
-                    $args = $this->getArgs(substr($this->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $this->bot->getConfig('commands_param_separator')); //intentional
-                }
-                
-                $hashtag->make($this);
-            }
-        }
-        return true;
-    }
-    
     protected function processMentions()
     {
         if ($this->bot->getConfig('process.mentions') == false)  return true;

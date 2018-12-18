@@ -8,4 +8,10 @@ abstract class HashtagController extends EntitiesController
     {
         return false;   //forcing hashtags to be case insensitive
     }
+    
+    
+    public function prefix()
+    {
+        return '#';
+    }
 }
