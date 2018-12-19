@@ -18,24 +18,24 @@ class Response
     protected $statusCode;
     
     
-	/**
-	 * @var ResponseInterface $response
-	 */
-	protected $response;
-	
-	
-	/**
-	 * @var PromiseInterface $promise
-	 */
-	protected $promise;
-	
-	
-	/**
-	 * @var array $request
-	 */
-	protected $request;
+    /**
+     * @var ResponseInterface $response
+     */
+    protected $response;
     
-	
+    
+    /**
+     * @var PromiseInterface $promise
+     */
+    protected $promise;
+    
+    
+    /**
+     * @var array $request
+     */
+    protected $request;
+    
+    
     /**
      * @var \Throwable $exception
      */
@@ -65,17 +65,17 @@ class Response
         $this->request = $request;
         $this->exception = $exception;
     }
-	
-	/**
-	 * whether or not this response is an ok response (http code 200 - 299)
-	 * @return bool
-	 */
-	public function isOk() : bool
-	{
-		if ($this->getStatusCode() >=200 && $this->getStatusCode() < 300 && $this->getResponse() && $this->getResponseBody()['ok']) return true;
+    
+    /**
+     * whether or not this response is an ok response (http code 200 - 299)
+     * @return bool
+     */
+    public function isOk() : bool
+    {
+        if ($this->getStatusCode() >=200 && $this->getStatusCode() < 300 && $this->getResponse() && $this->getResponseBody()['ok']) return true;
         
         return false;
-	}
+    }
     
     /**
      * @return int

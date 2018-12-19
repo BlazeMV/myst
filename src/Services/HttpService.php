@@ -17,30 +17,30 @@ use GuzzleHttp\Promise;
  */
 class HttpService
 {
-	/**
-	 * @var Client $client
-	 */
-	private $client;
-	
-	/**
-	 * Headers to be set on every request
-	 *
-	 * @var array $headers
-	 */
-	private $headers = [
-		'Accept' => 'application/json',
-		'Connection' => 'keep-alive',
-		'Accept-Language' => 'en-US,en;q=0.9'
-	];
-	
-	/**
-	 * HttpService constructor.
-	 * @param Client $client
-	 */
-	public function __construct(Client $client)
-	{
-		$this->client = $client;
-	}
+    /**
+     * @var Client $client
+     */
+    private $client;
+    
+    /**
+     * Headers to be set on every request
+     *
+     * @var array $headers
+     */
+    private $headers = [
+        'Accept' => 'application/json',
+        'Connection' => 'keep-alive',
+        'Accept-Language' => 'en-US,en;q=0.9'
+    ];
+    
+    /**
+     * HttpService constructor.
+     * @param Client $client
+     */
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
     
     /**
      * @param string $url
@@ -49,10 +49,10 @@ class HttpService
      * @param callable|null $async_function
      * @return Response
      */
-	public function post($url, array $data, $async = false, callable $async_function = null)
-	{
-		return $this->makeRequest('POST', $url, $data, $async, $async_function);
-	}
+    public function post($url, array $data, $async = false, callable $async_function = null)
+    {
+        return $this->makeRequest('POST', $url, $data, $async, $async_function);
+    }
     
     /**
      * @param string $method
@@ -62,16 +62,16 @@ class HttpService
      * @param callable|null $async_function
      * @return Response
      */
-	private function makeRequest($method, $url, array $body = null, $async = false, callable $async_function = null)
-	{
-	    $curlMultiHandle = new CurlMultiHandler();
-	    $options = [
+    private function makeRequest($method, $url, array $body = null, $async = false, callable $async_function = null)
+    {
+        $curlMultiHandle = new CurlMultiHandler();
+        $options = [
             'headers'       => $this->headers,
             'form_params'   => $body,
             'synchronous'   => !$async,
             'handler'       => $curlMultiHandle
         ];
-	    
+        
         $promise = $this->client->requestAsync($method, $url, $options);
         $response = null;
         $exception = null;
@@ -105,18 +105,18 @@ class HttpService
         }
         
         return new Response($code, $options, $response, $promise, $exception);
-	}
-	
-	/**
-	 * add headers to request
-	 * @param array $headers
-	 * @return array
-	 */
-	public function addHeaders(array $headers)
-	{
-		foreach ($headers as $key => $header) {
-			$this->headers[$key] = $header;
-		}
-		return $this->headers;
-	}
+    }
+    
+    /**
+     * add headers to request
+     * @param array $headers
+     * @return array
+     */
+    public function addHeaders(array $headers)
+    {
+        foreach ($headers as $key => $header) {
+            $this->headers[$key] = $header;
+        }
+        return $this->headers;
+    }
 }

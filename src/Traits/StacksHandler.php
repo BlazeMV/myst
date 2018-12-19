@@ -50,12 +50,12 @@ trait StacksHandler
      * @throws StackException
      */
     protected function populateStacks(array $config) {
-    	$this->commands_stack = new CommandsStack($config['commands']);
-    	$this->conversations_stack = new ConversationsStack($config['conversations']);
-    	$this->callback_queries_stack = new CallbackQueriesStack($config['callback_queries']);
-    	$this->hashtags_stack = new HashtagsStack($config['hashtags']);
-    	$this->mentions_stack = new MentionsStack($config['mentions']);
-    	$this->texts_stack = new TextsStack($config['texts']);
+        $this->commands_stack = new CommandsStack($config['commands']);
+        $this->conversations_stack = new ConversationsStack($config['conversations']);
+        $this->callback_queries_stack = new CallbackQueriesStack($config['callback_queries']);
+        $this->hashtags_stack = new HashtagsStack($config['hashtags']);
+        $this->mentions_stack = new MentionsStack($config['mentions']);
+        $this->texts_stack = new TextsStack($config['texts']);
         
         return $this;
     }

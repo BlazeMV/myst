@@ -11,42 +11,42 @@ use GuzzleHttp\Client;
 
 abstract class BaseRequest
 {
-	/**
-	 * telegram bot api method https://core.telegram.org/bots/api#available-methods
-	 * @var string $method
-	*/
-	protected $method;
-	
-	/**
-	 * Data to send with the request https://core.telegram.org/bots/api#available-methods
-	 * @var array $params
-	*/
-	protected $params = [];
-	
-	/**
-	 * whether or not to make an async request to api
-	 * @var bool $async
-	*/
-	protected $async;
-	
-	/**
-	 * HttpService that will be used to make the request
-	 * @var HttpService $http_service
-	*/
-	protected $http_service;
-	
-	/**
-	 * @var Bot $bot
-	*/
-	protected $bot;
-	
-	public static function make()
-	{
-		$me = new static;
-		$me->method = camel_case(class_basename(static::class));
-		$me->http_service = new HttpService(new Client());
-		return $me;
-	}
+    /**
+     * telegram bot api method https://core.telegram.org/bots/api#available-methods
+     * @var string $method
+    */
+    protected $method;
+    
+    /**
+     * Data to send with the request https://core.telegram.org/bots/api#available-methods
+     * @var array $params
+    */
+    protected $params = [];
+    
+    /**
+     * whether or not to make an async request to api
+     * @var bool $async
+    */
+    protected $async;
+    
+    /**
+     * HttpService that will be used to make the request
+     * @var HttpService $http_service
+    */
+    protected $http_service;
+    
+    /**
+     * @var Bot $bot
+    */
+    protected $bot;
+    
+    public static function make()
+    {
+        $me = new static;
+        $me->method = camel_case(class_basename(static::class));
+        $me->http_service = new HttpService(new Client());
+        return $me;
+    }
     
     /**
      * get the class name of the response object to return
@@ -181,29 +181,29 @@ abstract class BaseRequest
      * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function send(callable $async_function = null)
-	{
-	    if ($this->bot === null) throw new RequestException("setBot() method must be called before calling send() method");
-	    
-		$this->prepareRequest();
-		$response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/', $this->getParams(), $this->isAsync(), $async_function);
-		
-		if ($response->isOk())
-		    $response->setResponseObject($this->responseObject(), $this->multipleResponseObjects());
-		
-		return $response;
-	}
+    {
+        if ($this->bot === null) throw new RequestException("setBot() method must be called before calling send() method");
+        
+        $this->prepareRequest();
+        $response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/', $this->getParams(), $this->isAsync(), $async_function);
+        
+        if ($response->isOk())
+            $response->setResponseObject($this->responseObject(), $this->multipleResponseObjects());
+        
+        return $response;
+    }
     
     /**
      * @return $this
      */
     private function prepareRequest()
-	{
-		$this->addParam('method', $this->getMethod());
+    {
+        $this->addParam('method', $this->getMethod());
         
         if ($this->hasParam('reply_markup')) {
             ($this->addParam('reply_markup', $this->getParam('reply_markup')->serialize()));
         }
-		
-		return $this;
-	}
+        
+        return $this;
+    }
 }
