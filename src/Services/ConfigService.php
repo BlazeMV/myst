@@ -124,7 +124,9 @@ class ConfigService
         }
         
         foreach ($string as $item) {
-            if (!array_has($config, $item)) continue;
+            if (!array_has($config, $item)) {
+                continue;
+            }
             
             if (!is_string(array_get($config, $item)) || strlen(array_get($config, $item)) < 1) {
                 throw new ConfigurationException("$item is expected to be a string.");
@@ -132,7 +134,9 @@ class ConfigService
         }
         
         foreach ($boolean as $item) {
-            if (!array_has($config, $item)) continue;
+            if (!array_has($config, $item)) {
+                continue;
+            }
             
             if (!is_bool(array_get($config, $item))) {
                 throw new ConfigurationException("$item is expected to be a boolean true or false.");
@@ -140,7 +144,9 @@ class ConfigService
         }
         
         foreach ($array as $item) {
-            if (!array_has($config, $item)) continue;
+            if (!array_has($config, $item)) {
+                continue;
+            }
             
             if (!is_array(array_get($config, $item))) {
                 throw new ConfigurationException("$item is expected to be an array.");
@@ -148,7 +154,9 @@ class ConfigService
         }
         
         foreach ($regex as $item => $pattern) {
-            if (!array_has($config, $item)) continue;
+            if (!array_has($config, $item)) {
+                continue;
+            }
             
             if (preg_match($pattern, array_get($config, $item)) !== 1) {
                 throw new ConfigurationException("$item does not match the required pattern");

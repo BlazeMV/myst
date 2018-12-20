@@ -23,16 +23,30 @@ class StubService
     
             $contents = str_replace(['{name}', '{classname}'], [strtolower($name), $name], $contents);
     
-            if (!File::exists($path))
+            if (!File::exists($path)) {
                 mkdir($path, 0755, true);
+            }
     
-            if (File::exists("$path$name.php"))
+            if (File::exists("$path$name.php")) {
                 throw new ControllerExistsException("$name already exists at $path");
+            }
     
             File::put("$path$name.php", $contents);
         } catch (\Exception $exception) {
-            if ($exception instanceof ControllerExistsException) throw new ControllerExistsException($exception->getMessage(), $exception->getCode(), $exception->getPrevious());
-            if ($exception instanceof \ReflectionException) throw new \ReflectionException($exception->getMessage(), $exception->getCode(), $exception->getPrevious());
+            if ($exception instanceof ControllerExistsException) {
+                throw new ControllerExistsException(
+                    $exception->getMessage(),
+                    $exception->getCode(),
+                    $exception->getPrevious()
+                );
+            }
+            if ($exception instanceof \ReflectionException) {
+                throw new \ReflectionException(
+                    $exception->getMessage(),
+                    $exception->getCode(),
+                    $exception->getPrevious()
+                );
+            }
             throw new StubException($exception->getMessage(), $exception->getCode(), $exception->getPrevious());
         }
     }

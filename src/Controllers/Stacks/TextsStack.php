@@ -17,10 +17,14 @@ class TextsStack extends BaseStack
      */
     public function addStackItem(BaseController $item): BaseController
     {
-        if (!$item instanceof TextController) throw new StackException(get_class($item) . " must be an instance of " . TextController::class);
+        if (!$item instanceof TextController) {
+            throw new StackException(get_class($item) . " must be an instance of " . TextController::class);
+        }
         $names = array_merge($item->getAliases(), [$item->getName()]);
         foreach ($names as $name) {
-            if (array_has($this->items, $name)) throw new StackException("$name has already been registered as a text.");
+            if (array_has($this->items, $name)) {
+                throw new StackException("$name has already been registered as a text.");
+            }
             $this->items[$name] = $item;
         }
         return $item;
@@ -29,7 +33,6 @@ class TextsStack extends BaseStack
     /**
      * @param Update $update
      * @return bool|mixed
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function processStack(Update $update)
     {
@@ -58,16 +61,19 @@ class TextsStack extends BaseStack
      * @param Bot $bot
      * @param Update $update
      * @return bool
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     protected function checkStackPrerequisites(Bot $bot, Update $update): bool
     {
-        if ($bot->getConfig('process.texts') == false)  {
+        if ($bot->getConfig('process.texts') == false) {
             return false;
         }
         
         $type = $update->detectType();
-        if ($type !== 'message' && $type !== 'edited_message' && $type !== 'channel_post' && $type !== 'edited_channel_post') {
+        if ($type !== 'message'
+            && $type !== 'edited_message'
+            && $type !== 'channel_post'
+            && $type !== 'edited_channel_post'
+        ) {
             return false;
         }
         

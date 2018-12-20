@@ -47,18 +47,36 @@ class Response
      */
     protected $object;
     
-    private static $scalar_types = ['int', 'integer', 'bool', 'boolean', 'float', 'double', 'real', 'string', 'array', 'object', 'unset'];
+    private static $scalar_types = [
+        'int',
+        'integer',
+        'bool',
+        'boolean',
+        'float',
+        'double',
+        'real',
+        'string',
+        'array',
+        'object',
+        'unset'
+    ];
     
     /**
      * Response constructor.
+     *
      * @param int $statusCode
      * @param array $request
      * @param ResponseInterface|null $response
      * @param PromiseInterface|null $promise
      * @param \Throwable|null $exception
      */
-    public function __construct(int $statusCode, array $request, ResponseInterface $response = null, PromiseInterface $promise = null, \Throwable $exception = null)
-    {
+    public function __construct(
+        int $statusCode,
+        array $request,
+        ResponseInterface $response = null,
+        PromiseInterface $promise = null,
+        \Throwable $exception = null
+    ) {
         $this->statusCode = $statusCode;
         $this->response = $response;
         $this->promise = $promise;
@@ -72,7 +90,12 @@ class Response
      */
     public function isOk() : bool
     {
-        if ($this->getStatusCode() >=200 && $this->getStatusCode() < 300 && $this->getResponse() && $this->getResponseBody()['ok']) return true;
+        if ($this->getStatusCode() >=200
+            && $this->getStatusCode() < 300
+            && $this->getResponse()
+            && $this->getResponseBody()['ok']) {
+            return true;
+        }
         
         return false;
     }
@@ -122,7 +145,9 @@ class Response
      */
     public function getResponseBody()
     {
-        if ($this->getResponse() === null) return null;
+        if ($this->getResponse() === null) {
+            return null;
+        }
         $this->getResponse()->getBody()->rewind();
         return json_decode($this->getResponse()->getBody()->getContents(), true);
     }
@@ -132,13 +157,21 @@ class Response
      */
     public function getErrorMessage()
     {
-        if ($this->getStatusCode() === 0) return 'Async Request';
+        if ($this->getStatusCode() === 0) {
+            return 'Async Request';
+        }
         
-        if (isset($this->getResponseBody()['description'])) return $this->getResponseBody()['description'];
+        if (isset($this->getResponseBody()['description'])) {
+            return $this->getResponseBody()['description'];
+        }
         
-        if ($this->getResponse() !== null) return $this->getResponse()->getReasonPhrase();
+        if ($this->getResponse() !== null) {
+            return $this->getResponse()->getReasonPhrase();
+        }
         
-        if ($this->getException()) return $this->getException()->getMessage();
+        if ($this->getException()) {
+            return $this->getException()->getMessage();
+        }
         
         return null;
     }
@@ -153,12 +186,11 @@ class Response
         if (in_array($class, static::$scalar_types)) {
             $this->object = $this->getResponseBody();
             settype($this->object, $class);
-        }else {
+        } else {
             if ($multiple) {
                 foreach ($this->getResponseBody()['result'] as $item) {
                     $this->object[] = new $class($item);
                 }
-        
             } else {
                 $this->object = new $class($this->getResponseBody()['result']);
             }

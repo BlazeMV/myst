@@ -83,7 +83,7 @@ class HttpService
             }
             
             $promise->then(function (ResponseInterface $response) use ($async_function, $promise, $options) {
-                if (is_callable($async_function)){
+                if (is_callable($async_function)) {
                     $code = $response->getStatusCode();
     
                     $response = new Response($code, $options, $response, $promise, null);

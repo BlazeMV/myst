@@ -16,48 +16,61 @@ class ConversationsStack extends BaseStack
      */
     public function addStackItem(BaseController $item): BaseController
     {
-        if (!$item instanceof ConversationController) throw new StackException(get_class($item) . " must be an instance of " . ConversationController::class);
-        if (array_has($this->items, $item->getName())) throw new StackException($item->getName() . " has already been registered as a conversation.");
+        if (!$item instanceof ConversationController) {
+            throw new StackException(get_class($item) . " must be an instance of " . ConversationController::class);
+        }
+        if (array_has($this->items, $item->getName())) {
+            throw new StackException($item->getName() . " has already been registered as a conversation.");
+        }
         $this->items[$item->getName()] = $item;
         return $item;
     }
     
     /**
      * @inheritdoc
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function processStack(Update $update)
     {
         $bot = $update->getBot();
-        if (!$this->checkStackPrerequisites($bot, $update)) return false;
+        if (!$this->checkStackPrerequisites($bot, $update)) {
+            return false;
+        }
     
         $conversationService = new ConversationService();
-        if (!$conversationService->hasConversation($update->getChat()->getId(), $update->getFrom()->getId())) return false;
+        if (!$conversationService->hasConversation($update->getChat()->getId(), $update->getFrom()->getId())) {
+            return false;
+        }
     
         $convo = $conversationService->getConversation($update->getChat()->getId(), $update->getFrom()->getId());
-        if ($update->getMessage()->getReplyToMessage()->getId() !== $convo['reply_message_id']) return false;
+        if ($update->getMessage()->getReplyToMessage()->getId() !== $convo['reply_message_id']) {
+            return false;
+        }
     
         $conversation = $this->getStackItem($convo['name']);
-        if ($conversation === null) return false;
+        if ($conversation === null) {
+            return false;
+        }
 
         $conversation->make($update);
-    }
-    
-    /**
-     * @inheritdoc
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
-     */
-    protected function checkStackPrerequisites(Bot $bot, Update $update): bool
-    {
-        if ($bot->getConfig('process.conversations') == false)  return false;
-        if ($update->detectType() !== 'message') return false;
-        if ($update->getMessage()->getReplyToMessage() === null) return false;
         
         return true;
     }
     
-    protected function checkItemPrerequisites(Bot $bot, Update $update, BaseController $item): bool
+    /**
+     * @inheritdoc
+     */
+    protected function checkStackPrerequisites(Bot $bot, Update $update): bool
     {
+        if ($bot->getConfig('process.conversations') == false) {
+            return false;
+        }
+        if ($update->detectType() !== 'message') {
+            return false;
+        }
+        if ($update->getMessage()->getReplyToMessage() === null) {
+            return false;
+        }
+        
         return true;
     }
 }

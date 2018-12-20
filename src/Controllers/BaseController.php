@@ -180,18 +180,17 @@ abstract class BaseController
      * @param BaseRequest $request
      * @param null $async_function
      * @return Response
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      * @throws \Blaze\Myst\Exceptions\RequestException
      */
     public function replyWith(BaseRequest $request, $async_function = null)
     {
         $request->setBot($this->getBot());
         
-        if ($request instanceof SendMessage)
+        if ($request instanceof SendMessage) {
             $request->to($this->getUpdate()->getChat()->getId())->replyTo($this->getUpdate()->getMessage()->getId());
-            
-        elseif ($request instanceof AnswerCallbackQuery)
+        } elseif ($request instanceof AnswerCallbackQuery) {
             $request->to($this->getUpdate()->getCallbackQuery()->getId());
+        }
         
         
         return $this->getBot()->sendRequest($request, $async_function);

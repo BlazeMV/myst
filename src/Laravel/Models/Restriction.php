@@ -9,12 +9,18 @@ class Restriction extends Model
 {
     protected $table = 'myst_restrictions';
     
+    /**
+     * @return \Illuminate\Config\Repository|mixed|string
+     */
     public function getConnectionName()
     {
         return ConfigService::getDatabaseConnection();
     }
     
-    public function Restrictable()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function restrictable()
     {
         return $this->morphTo();
     }

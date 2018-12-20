@@ -13,7 +13,6 @@ abstract class BaseStack implements StackInterface
      */
     protected $items = [];
     
-    
     /**
      * BaseStack constructor.
      * @param array $items
@@ -23,7 +22,6 @@ abstract class BaseStack implements StackInterface
     {
         $this->populateStack($items);
     }
-    
     
     /**
      * @inheritdoc
@@ -36,7 +34,6 @@ abstract class BaseStack implements StackInterface
         return $this;
     }
     
-    
     /**
      * @inheritdoc
      */
@@ -45,16 +42,13 @@ abstract class BaseStack implements StackInterface
         return $this->items;
     }
     
-    
     /**
      * @inheritdoc
      */
     public function getStackItem($name): BaseController
     {
-        if (array_has($this->items, $name)) return $this->items[$name];
-        return null;
+        return array_has($this->items, $name) ? $this->items[$name] : null;
     }
-    
     
     /**
      * @param Bot $bot

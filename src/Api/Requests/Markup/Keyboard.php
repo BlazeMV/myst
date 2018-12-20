@@ -4,7 +4,8 @@ namespace Blaze\Myst\Api\Requests\Markup;
 
 use Blaze\Myst\Exceptions\MarkupException;
 
-class Keyboard extends BaseMarkup {
+class Keyboard extends BaseMarkup
+{
 
     protected $rows = [];
 
@@ -15,14 +16,20 @@ class Keyboard extends BaseMarkup {
     protected $selective = false;
 
     protected $remove = false;
-
-    public function addRow(Button ...$buttons){
+    
+    /**
+     * @param Button ...$buttons
+     * @return $this
+     * @throws MarkupException
+     */
+    public function addRow(Button ...$buttons)
+    {
         $row = [];
         foreach ($buttons as $button) {
-            if ($this->inline !== $button->inline){
-                if ($this->isInline()){
+            if ($this->inline !== $button->inline) {
+                if ($this->isInline()) {
                     throw new MarkupException("Custom keyboard button provided for inline keyboard.");
-                }else{
+                } else {
                     throw new MarkupException("Inline keyboard button provided for custom keyboard.");
                 }
             }
@@ -31,44 +38,78 @@ class Keyboard extends BaseMarkup {
         $this->rows[] = $row;
         return $this;
     }
-
-    public function resize(){
-        if ($this->isInline()) throw new MarkupException("Resize an inline keyboard is not allowed.");
+    
+    /**
+     * @return $this
+     * @throws MarkupException
+     */
+    public function resize()
+    {
+        if ($this->isInline()) {
+            throw new MarkupException("Resize an inline keyboard is not allowed.");
+        }
 
         $this->resize = true;
         return $this;
     }
-
-    public function oneTime(){
-        if ($this->isInline()) throw new MarkupException("Sending a one time inline keyboard is not supported.");
+    
+    /**
+     * @return $this
+     * @throws MarkupException
+     */
+    public function oneTime()
+    {
+        if ($this->isInline()) {
+            throw new MarkupException("Sending a one time inline keyboard is not supported.");
+        }
 
         $this->one_time = true;
         return $this;
     }
-
-    public function selective(){
-        if ($this->isInline()) throw new MarkupException("Sending an inline keybord to selective people is not supported.");
+    
+    /**
+     * @return $this
+     * @throws MarkupException
+     */
+    public function selective()
+    {
+        if ($this->isInline()) {
+            throw new MarkupException("Sending an inline keyboard to selective people is not supported.");
+        }
 
         $this->selective = true;
         return $this;
     }
-
-    public function remove(){
-        if ($this->isInline()) throw new MarkupException("Removing an inline keybord is not supported.");
-        if (count($this->rows) > 0) throw new MarkupException("This keyboard has existing buttons.");
+    
+    /**
+     * @return $this
+     * @throws MarkupException
+     */
+    public function remove()
+    {
+        if ($this->isInline()) {
+            throw new MarkupException("Removing an inline keyboard is not supported.");
+        }
+        if (count($this->rows) > 0) {
+            throw new MarkupException("This keyboard has existing buttons.");
+        }
 
         $this->remove = true;
         return $this;
     }
-
-    public function serialize(){
+    
+    /**
+     * @return false|string
+     */
+    public function serialize()
+    {
         $data = [];
-        if ($this->remove){
+        if ($this->remove) {
             $data['remove_keyboard'] = $this->remove;
             $data['selective'] = $this->selective;
-        }elseif ($this->isInline()){
+        } elseif ($this->isInline()) {
             $data['inline_keyboard'] = $this->rows;
-        }else{
+        } else {
             $data['keyboard'] = $this->rows;
             $data['resize_keyboard'] = $this->resize;
             $data['one_time_keyboard'] = $this->one_time;

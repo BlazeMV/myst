@@ -52,7 +52,7 @@ abstract class BaseRequest
      * get the class name of the response object to return
      * @return string
      */
-    protected abstract function responseObject() : string ;
+    abstract protected function responseObject() : string ;
     
     /**
      * get the class name of the response object to return
@@ -120,11 +120,12 @@ abstract class BaseRequest
     
     /**
      * @return bool
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function isAsync(): bool
     {
-        if ($this->async !== null) return $this->async;
+        if ($this->async !== null) {
+            return $this->async;
+        }
         return $this->getBot()->getConfig('async');
     }
     
@@ -178,17 +179,24 @@ abstract class BaseRequest
      * @param callable|null $async_function
      * @return Response
      * @throws RequestException
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function send(callable $async_function = null)
     {
-        if ($this->bot === null) throw new RequestException("setBot() method must be called before calling send() method");
+        if ($this->bot === null) {
+            throw new RequestException("setBot() method must be called before calling send() method");
+        }
         
         $this->prepareRequest();
-        $response = $this->http_service->post(ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/', $this->getParams(), $this->isAsync(), $async_function);
+        $response = $this->http_service->post(
+            ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/',
+            $this->getParams(),
+            $this->isAsync(),
+            $async_function
+        );
         
-        if ($response->isOk())
+        if ($response->isOk()) {
             $response->setResponseObject($this->responseObject(), $this->multipleResponseObjects());
+        }
         
         return $response;
     }

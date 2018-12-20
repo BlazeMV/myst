@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -14,7 +16,7 @@ class CreateMystChatsTable extends Migration
      */
     public function up()
     {
-        Schema::connection(ConfigService::getDatabaseConnection())->create('myst_chats', function (Blueprint $table) {
+        Schema::create('myst_chats', function (Blueprint $table) {
             $table->bigInteger('id');
             $table->primary('id');
             $table->string('type');
@@ -34,6 +36,14 @@ class CreateMystChatsTable extends Migration
      */
     public function down()
     {
-        Schema::connection(ConfigService::getDatabaseConnection())->dropIfExists('myst_chats');
+        Schema::dropIfExists('myst_chats');
+    }
+    
+    /**
+     * @return \Illuminate\Config\Repository|mixed|string
+     */
+    public function getConnection()
+    {
+        return ConfigService::getDatabaseConnection();
     }
 }

@@ -2,15 +2,11 @@
 
 namespace Blaze\Myst\Api\Requests\Markup;
 
-use Blaze\Myst\Exceptions\MarkupException;
-
 class Button extends BaseMarkup
 {
     protected $text;
     protected $field;
     protected $value;
-
-    protected $accepted_fields = ['request_contact', 'request_location', 'url', 'callback_data', 'switch_inline_query', 'switch_inline_query_current_chat', 'callback_game', 'pay'];
 
     public function setText($text)
     {
@@ -78,7 +74,7 @@ class Button extends BaseMarkup
     {
         $data = [];
         $data['text'] = $this->text;
-        if (isset($this->field) && isset($this->value)){
+        if (isset($this->field) && isset($this->value)) {
             $data[$this->field] = $this->value;
         }
         return $data;

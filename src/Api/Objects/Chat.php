@@ -17,10 +17,10 @@ use Blaze\Myst\Api\ApiObject;
 */
 class Chat extends ApiObject
 {
-        protected function singleObjectRelations(): array
-        {
-            return [
-                'photo' => ChatPhoto::class,
-            ];
-        }
+    protected function singleObjectRelations(): array
+    {
+        return [
+            'photo' => ChatPhoto::class,
+        ];
+    }
 }

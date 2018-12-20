@@ -2,7 +2,6 @@
 
 namespace Blaze\Myst\Api;
 
-use Blaze\Myst\Api\Objects\Raw;
 use Blaze\Myst\Exceptions\MystException;
 use Illuminate\Support\Collection;
 
@@ -43,7 +42,7 @@ class ApiObject extends BaseObject
      *      }
      * @return  array
      */
-    protected function  multipleObjectRelations() : array
+    protected function multipleObjectRelations() : array
     {
         return [
             //'property_name' => api_object_class::class
@@ -100,25 +99,25 @@ class ApiObject extends BaseObject
         $multiple_relations = collect($this->multipleObjectRelations());
         
         foreach ($data as $key => &$item) {
-            
-            if (is_string($item)) trim($item);
-            
+            if (is_string($item)) {
+                trim($item);
+            }
             if ($single_relations->has($key)) {
-                
                 $className = $single_relations->get($key);
                 $temp = new $className($item);
                 $item = $temp;
-                
             } elseif ($multiple_relations->has($key)) {
-                
                 $className = $multiple_relations->get($key);
                 $temp = [];
-                foreach ($item as $value) $temp[] = new $className($value);
+                foreach ($item as $value) {
+                    $temp[] = new $className($value);
+                }
                 $item = collect($temp);
-                
             }
             
-            if ($property_aliases->has($key) && !isset($data[$property_aliases->get($key)])) $data[$property_aliases->get($key)] = $item;
+            if ($property_aliases->has($key) && !isset($data[$property_aliases->get($key)])) {
+                $data[$property_aliases->get($key)] = $item;
+            }
         }
         parent::__construct($data);
     }
@@ -132,14 +131,22 @@ class ApiObject extends BaseObject
     private function propagatePropertyAliases()
     {
         $property_aliases = collect();
-        if (!is_array($this->globalPropertyAliases())) throw new MystException("\"method globalPropertyAliases()\" should return an array.");
+        if (!is_array($this->globalPropertyAliases())) {
+            throw new MystException("\"method globalPropertyAliases()\" should return an array.");
+        }
         foreach ($this->globalPropertyAliases() as $original => $alias) {
-            if (!is_string($alias) || is_int($alias)) continue;
+            if (!is_string($alias) || is_int($alias)) {
+                continue;
+            }
             $property_aliases->put($original, $alias);
         }
-        if (!is_array($this->proposedPropertyAliases())) throw new MystException("\"method proposedPropertyAliases()\" should return an array.");
+        if (!is_array($this->proposedPropertyAliases())) {
+            throw new MystException("\"method proposedPropertyAliases()\" should return an array.");
+        }
         foreach ($this->proposedPropertyAliases() as $original => $alias) {
-            if (!is_string($alias) || is_int($alias)) continue;
+            if (!is_string($alias) || is_int($alias)) {
+                continue;
+            }
             $property_aliases->put($original, $alias);
         }
         

@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -14,7 +16,7 @@ class CreateMystRestrictionTable extends Migration
      */
     public function up()
     {
-        Schema::connection(ConfigService::getDatabaseConnection())->create('myst_restrictions', function (Blueprint $table) {
+        Schema::create('myst_restrictions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('relative_id');
             $table->string('relative_type');
@@ -31,6 +33,14 @@ class CreateMystRestrictionTable extends Migration
      */
     public function down()
     {
-        Schema::connection(ConfigService::getDatabaseConnection())->dropIfExists('myst_restrictions');
+        Schema::dropIfExists('myst_restrictions');
+    }
+    
+    /**
+     * @return \Illuminate\Config\Repository|mixed|string
+     */
+    public function getConnection()
+    {
+        return ConfigService::getDatabaseConnection();
     }
 }

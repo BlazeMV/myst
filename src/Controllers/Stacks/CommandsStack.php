@@ -35,7 +35,6 @@ class CommandsStack extends BaseStack
     
     /**
      * @inheritdoc
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function processStack(Update $update)
     {
@@ -54,7 +53,10 @@ class CommandsStack extends BaseStack
                 continue;
             }
             
-            $command->setArguments(substr($update->getMessage()->getText(), $entity->getOffset() + $entity->getLength()), $bot->getConfig('commands_param_separator'))->make($update);
+            $command->setArguments(
+                substr($update->getMessage()->getText(), $entity->getOffset() + $entity->getLength()),
+                $bot->getConfig('commands_param_separator')
+            )->make($update);
         }
         
         return true;
@@ -63,16 +65,18 @@ class CommandsStack extends BaseStack
     
     /**
      * @inheritdoc
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     protected function checkStackPrerequisites(Bot $bot, Update $update): bool
     {
-        if ($bot->getConfig('process.commands') == false)  {
+        if ($bot->getConfig('process.commands') == false) {
             return false;
         }
         
         $type = $update->detectType();
-        if ($type !== 'message' && $type !== 'edited_message' && $type !== 'channel_post' && $type !== 'edited_channel_post') {
+        if ($type !== 'message'
+            && $type !== 'edited_message'
+            && $type !== 'channel_post'
+            && $type !== 'edited_channel_post') {
             return false;
         }
         
@@ -98,18 +102,25 @@ class CommandsStack extends BaseStack
         
         $message = $update->getMessage();
         
-        if ($command->isStandalone() && !Str::compareCaseInsensitive($message->getText(), str_start($name, $command->prefix()))) {
+        if ($command->isStandalone()
+            && !Str::compareCaseInsensitive($message->getText(), str_start($name, $command->prefix()))
+        ) {
             return false;
         }
     
-        $entity = $message->getEntities()->filter(function (Entity $entity) use ($message, $name, $command){
+        $entity = $message->getEntities()->filter(function (Entity $entity) use ($message, $name, $command) {
             if ($entity->getType() !== 'bot_command') {
                 return false;
             }
-            if (!Str::compareCaseInsensitive($entity->getText($message->getText()), str_start($name, $command->prefix()))) {
+            if (!Str::compareCaseInsensitive(
+                $entity->getText($message->getText()),
+                str_start($name, $command->prefix())
+            )) {
                 return false;
             }
-            if ($command->isCaseSensitive() && $entity->getText($message->getText()) !== str_start($name, $command->prefix())) {
+            if ($command->isCaseSensitive()
+                && $entity->getText($message->getText()) !== str_start($name, $command->prefix())
+            ) {
                 return false;
             }
             if (!$entity->inPosition($message->getText(), $command->getPosition())) {

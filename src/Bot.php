@@ -2,8 +2,6 @@
 
 namespace Blaze\Myst;
 
-use Blaze\Myst\Api\Objects\Update;
-use Blaze\Myst\Api\Requests\BaseRequest;
 use Blaze\Myst\Exceptions\ConfigurationException;
 use Blaze\Myst\Services\ConfigService;
 use Blaze\Myst\Traits\RequestHandler;
@@ -40,17 +38,12 @@ class Bot
     
     /**
      * gets a value from the bot's config array
-     * 
+     *
      * @param $key
      * @return mixed
-     * @throws ConfigurationException
      */
     public function getConfig($key)
     {
-        if (property_exists($this, $key)) return $this->$key;
-        
-        if (array_has($this->config, $key)) return array_get($this->config, $key);
-        
-        throw new ConfigurationException("Unknown config key $key");
+        return array_has($this->config, $key) ? array_get($this->config, $key) : null;
     }
 }

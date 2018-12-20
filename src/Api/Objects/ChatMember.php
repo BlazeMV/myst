@@ -10,10 +10,10 @@ use Blaze\Myst\Api\ApiObject;
 */
 class ChatMember extends ApiObject
 {
-        protected function singleObjectRelations(): array
-        {
-            return [
-                'user' => User::class,
-            ];
-        }
+    protected function singleObjectRelations(): array
+    {
+        return [
+            'user' => User::class,
+        ];
+    }
 }

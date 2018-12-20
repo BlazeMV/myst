@@ -16,8 +16,12 @@ class CallbackQueriesStack extends BaseStack
      */
     public function addStackItem(BaseController $item): BaseController
     {
-        if (!$item instanceof CallbackQueryController) throw new StackException(get_class($item) . " must be an instance of " . CallbackQueryController::class);
-        if (array_has($this->items, $item->getName())) throw new StackException($item->getName() . " has already been registered as a callback query.");
+        if (!$item instanceof CallbackQueryController) {
+            throw new StackException(get_class($item) . " must be an instance of " . CallbackQueryController::class);
+        }
+        if (array_has($this->items, $item->getName())) {
+            throw new StackException($item->getName() . " has already been registered as a callback query.");
+        }
         $this->items[$item->getName()] = $item;
         return $item;
     }
@@ -25,7 +29,6 @@ class CallbackQueriesStack extends BaseStack
     /**
      * @param Update $update
      * @return bool|mixed
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     public function processStack(Update $update)
     {
@@ -58,11 +61,10 @@ class CallbackQueriesStack extends BaseStack
      * @param Bot $bot
      * @param Update $update
      * @return bool
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      */
     protected function checkStackPrerequisites(Bot $bot, Update $update): bool
     {
-        if ($bot->getConfig('process.callback_queries') == false)  {
+        if ($bot->getConfig('process.callback_queries') == false) {
             return false;
         }
     
@@ -79,8 +81,9 @@ class CallbackQueriesStack extends BaseStack
         if (!Arr::isValueTrue($cbq->getEngagesIn(), $update->getChat()->getType())) {
             return false;
         }
-    
-        $text = $update->getCallbackQuery()->has('data') ? $update->getCallbackQuery()->getData() : $update->getCallbackQuery()->getGameShortName();
+        
+        $callback_query = $update->getCallbackQuery();
+        $text = $callback_query->has('data') ? $callback_query->getData() : $callback_query->getGameShortName();
         if ($text !== $name && !starts_with($text, $name . " ")) {
             return false;
         }

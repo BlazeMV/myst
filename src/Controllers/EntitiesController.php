@@ -20,7 +20,8 @@ abstract class EntitiesController extends BaseController
     protected $standalone = true;
     
     /**
-     * @var bool $case_sensitive whether or not the entity text should be case sensitive to the name (or aliases) of this controller
+     * @var bool $case_sensitive whether or not the entity text should be case sensitive to the name (or aliases) of
+     * this controller
      */
     protected $case_sensitive = false;
     

@@ -4,7 +4,8 @@ namespace Blaze\Myst;
 
 use Blaze\Myst\Exceptions\ConfigurationException;
 
-class BotsManager {
+class BotsManager
+{
     
     /**
      * An array bot config array
@@ -25,7 +26,8 @@ class BotsManager {
      *
      * @param array $config
      */
-    public function __construct(array $config) {
+    public function __construct(array $config)
+    {
         $this->config = $config;
     }
     
@@ -38,7 +40,9 @@ class BotsManager {
      */
     public function getConfigValue($key)
     {
-        if (isset($this->config[$key])) return $this->config[$key];
+        if (isset($this->config[$key])) {
+            return $this->config[$key];
+        }
         
         throw new ConfigurationException("key $key not found in Myst config");
     }
@@ -69,7 +73,9 @@ class BotsManager {
         $name = $name ?: $this->getDefaultBotName();
         
         $bots = $this->getConfigValue('bots');
-        if (!isset($bots[$name])) throw new ConfigurationException("$name bot not configured in the config file.");
+        if (!isset($bots[$name])) {
+            throw new ConfigurationException("$name bot not configured in the config file.");
+        }
         
         $config = $bots[$name];
         $config['name'] = $name;

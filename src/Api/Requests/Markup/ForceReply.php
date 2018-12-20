@@ -2,20 +2,35 @@
 
 namespace Blaze\Myst\Api\Requests\Markup;
 
-class ForceReply {
-
+class ForceReply
+{
+    /**
+     * @var bool $selective
+    */
     protected $selective = false;
-
-    public function selective(){
+    
+    /**
+     * @return $this
+     */
+    public function selective()
+    {
         $this->selective = true;
         return $this;
     }
-
-    public static function make(){
+    
+    /**
+     * @return ForceReply
+     */
+    public static function make()
+    {
         return new self;
     }
-
-    public function serialize(){
+    
+    /**
+     * @return false|string
+     */
+    public function serialize()
+    {
         $data = [];
         $data['force_reply'] = true;
         $data['selective'] = $this->selective;

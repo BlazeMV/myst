@@ -35,7 +35,8 @@ class MystServiceProvider extends ServiceProvider
         $this->publishes([$config_path => config_path('myst.php')], 'Myst');
     }
     
-    protected function registerCommands(){
+    protected function registerCommands()
+    {
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MystCommand::class,

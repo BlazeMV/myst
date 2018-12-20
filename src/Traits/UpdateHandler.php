@@ -46,7 +46,7 @@ trait UpdateHandler
             }
         }
         
-        if (is_callable($pre_function)){
+        if (is_callable($pre_function)) {
             $pre_function($update);
         }
         
@@ -62,8 +62,13 @@ trait UpdateHandler
      */
     public function processControllers(Update $update)
     {
-        if ($update->detectType() == ('edited_message' || 'edited_channel_post') && $this->getConfig('process_edited_messages') == false) return false;
-        if (!$this->getConfig('engages_in.' . $update->getChat()->getType())) return false;
+        if (($update->detectType() == 'edited_message' || $update->detectType() == 'edited_channel_post')
+            && $this->getConfig('process_edited_messages') == false) {
+            return false;
+        }
+        if (!$this->getConfig('engages_in.' . $update->getChat()->getType())) {
+            return false;
+        }
         
         $this->getConversationsStack()->processStack($update);
         $this->getCommandsStack()->processStack($update);
@@ -78,20 +83,26 @@ trait UpdateHandler
     /**
      * @param Update $update
      * @return bool
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      * @throws \Blaze\Myst\Exceptions\RequestException
      */
     private function updateDatabase(Update $update)
     {
-        /** @var MystUser $user
+        /**
+         * @var MystUser $user
          * @var MystChat $chat
          * @var MystChatMember $chat_member
          */
         
         // check for table existence
-        if (!Schema::hasTable('myst_users')) return true;
-        if (!Schema::hasTable('myst_chats')) return true;
-        if (!Schema::hasTable('myst_chat_members')) return true;
+        if (!Schema::hasTable('myst_users')) {
+            return true;
+        }
+        if (!Schema::hasTable('myst_chats')) {
+            return true;
+        }
+        if (!Schema::hasTable('myst_chat_members')) {
+            return true;
+        }
         
         // create new / update existing user
         $user = MystUser::find($update->getFrom()->getId());
@@ -113,22 +124,37 @@ trait UpdateHandler
         $user->attachToChat($chat, $update->getChat());
         
         // update chat admins every 24 hours
-        if (Carbon::parse(MystChatMember::where('chat_id', $update->getChat()->getId())->orderBy('created_at')->first()->updated_at)->lessThan(Carbon::parse('-24 hours'))) {
-    
-            $update->getBot()->sendRequest(GetChatAdministrators::make()->chat($update->getChat()->getId())->async(false), function (Response $response) use ($update) {
-                if ($response->isOk()) {
-                    $admins = $response->getResponseObject();
-                    foreach ($admins as $admin) {
-                        /** @var ChatMember $admin */
-                        if ($admin->getStatus() == "creator" || $admin->getStatus() == "administrator") {
-                            MystChatMember::where('chat_id', $update->getChat()->getId())->where('user_id', $admin->getUser()->getId())->update(['admin', true]);
-                        } else {
-                            MystChatMember::where('chat_id', $update->getChat()->getId())->where('user_id', $admin->getUser()->getId())->update(['admin', false]);
+        if (Carbon::parse(
+            MystChatMember::where('chat_id', $update->getChat()->getId())
+                ->orderBy('created_at')
+                ->first()
+                ->updated_at
+        )->lessThan(
+            Carbon::parse('-24 hours')
+        )
+        ) {
+            $update->getBot()->sendRequest(
+                GetChatAdministrators::make()
+                    ->chat($update->getChat()->getId())
+                    ->async(),
+                function (Response $response) use ($update) {
+                    if ($response->isOk()) {
+                        $admins = $response->getResponseObject();
+                        foreach ($admins as $admin) {
+                            /** @var ChatMember $admin */
+                            if ($admin->getStatus() == "creator" || $admin->getStatus() == "administrator") {
+                                MystChatMember::where('chat_id', $update->getChat()->getId())
+                                    ->where('user_id', $admin->getUser()->getId())
+                                    ->update(['admin', true]);
+                            } else {
+                                MystChatMember::where('chat_id', $update->getChat()->getId())
+                                    ->where('user_id', $admin->getUser()->getId())
+                                    ->update(['admin', false]);
+                            }
                         }
                     }
                 }
-                
-            });
+            );
         }
         
         if ($update->detectType() == 'message') {
@@ -150,7 +176,9 @@ trait UpdateHandler
             
             if ($update->getMessage()->has('left_chat_member')) {
                 $tg_user = $update->getMessage()->getLeftChatMember();
-                MystChatMember::where('user_id', $tg_user->getId())->where('chat_id', $update->getChat()->getId())->delete();
+                MystChatMember::where('user_id', $tg_user->getId())
+                    ->where('chat_id', $update->getChat()->getId())
+                    ->delete();
             }
         }
         
@@ -161,26 +189,39 @@ trait UpdateHandler
     /**
      * @param Update $update
      * @return bool
-     * @throws \Blaze\Myst\Exceptions\ConfigurationException
      * @throws \Blaze\Myst\Exceptions\RequestException
      */
     private function hasRestrictions(Update $update)
     {
-        /** @var MystUser $user
+        /**
+         * @var MystUser $user
          * @var MystChat $chat
          * @var MystChatMember $member
          */
         
         // check for table existence
-        if (!Schema::hasTable('myst_restrictions')) return false;
+        if (!Schema::hasTable('myst_restrictions')) {
+            return false;
+        }
+    
+        $type = $update->detectType();
         
         $chat = MystChat::find($update->getChat()->getId());
-        if ($chat == null) return true;
+        if ($chat == null) {
+            return true;
+        }
         if ($chat->Restriction !== null) {
             if ($chat->Restriction->respond) {
-                $request = SendMessage::make()->to($update->getChat()->getId())->text("Chat Restricted.\nReason: " . $chat->Restriction->reason);
-                if ($update->detectType() == 'message' || $update->detectType() == 'edited_message' || $update->detectType() == 'channel_post' || $update->detectType() == 'edited_channel_post')
+                $request = SendMessage::make()
+                    ->to($update->getChat()->getId())
+                    ->text("Chat Restricted.\nReason: " . $chat->Restriction->reason);
+                if ($type == 'message'
+                    || $type == 'edited_message'
+                    || $type == 'channel_post'
+                    || $type == 'edited_channel_post'
+                ) {
                     $request->replyTo($update->getMessage()->getId());
+                }
     
                 $update->getBot()->sendRequest($request);
             }
@@ -188,25 +229,45 @@ trait UpdateHandler
         }
         
         $user = MystUser::find($update->getFrom()->getId());
-        if ($user == null) return true;
+        if ($user == null) {
+            return true;
+        }
         if ($user->Restriction !== null) {
             if ($user->Restriction->respond) {
-                $request = SendMessage::make()->to($update->getChat()->getId())->text("User Restricted.\nReason: " . $user->Restriction->reason);
-                if ($update->detectType() == 'message' || $update->detectType() == 'edited_message' || $update->detectType() == 'channel_post' || $update->detectType() == 'edited_channel_post')
+                $request = SendMessage::make()
+                    ->to($update->getChat()->getId())
+                    ->text("User Restricted.\nReason: " . $user->Restriction->reason);
+                if ($type == 'message'
+                    || $type == 'edited_message'
+                    || $type == 'channel_post'
+                    || $type == 'edited_channel_post'
+                ) {
                     $request->replyTo($update->getMessage()->getId());
+                }
                 
                 $update->getBot()->sendRequest($request);
             }
             return true;
         }
         
-        $member = MystChatMember::where('chat_id', $update->getChat()->getId())->where('user_id', $update->getFrom()->getId())->first();
-        if ($member == null) return true;
+        $member = MystChatMember::where('chat_id', $update->getChat()->getId())
+            ->where('user_id', $update->getFrom()->getId())
+            ->first();
+        if ($member == null) {
+            return true;
+        }
         if ($member->Restriction !== null) {
             if ($member->Restriction->respond) {
-                $request = SendMessage::make()->to($update->getChat()->getId())->text("Chat Member Restricted.\nReason: " . $member->Restriction->reason);
-                if ($update->detectType() == 'message' || $update->detectType() == 'edited_message' || $update->detectType() == 'channel_post' || $update->detectType() == 'edited_channel_post')
+                $request = SendMessage::make()
+                    ->to($update->getChat()->getId())
+                    ->text("Chat Member Restricted.\nReason: " . $member->Restriction->reason);
+                if ($type == 'message'
+                    || $type == 'edited_message'
+                    || $type == 'channel_post'
+                    || $type == 'edited_channel_post'
+                ) {
                     $request->replyTo($update->getMessage()->getId());
+                }
                 
                 $update->getBot()->sendRequest($request);
             }
