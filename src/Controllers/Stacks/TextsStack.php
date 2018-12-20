@@ -93,20 +93,26 @@ class TextsStack extends BaseStack
         }
         
         $content = $update->getMessage()->getText();
-        if ($text->isStandalone() && !Str::compareCaseInsensitive($name, $content)) {
-            return false;
+        
+        $pattern = '/';
+        if ($text->isStandalone()) {
+            $pattern .= "^$name$";
+        } else {
+            $pattern .= "(^$name\s|\s$name\s|\s$name$|^$name$)";
         }
-        if ($text->isStandalone() && $text->isCaseSensitive() && $name !== $content) {
-            return false;
-        }
-        if ($text->isCaseSensitive() && strpos($content, $name) === false) {
-            return false;
-        }
-        if (strpos(strtolower($content), strtolower($name)) === false) {
+        $pattern .= $text->isCaseSensitive() ? '/' : '/i';
+        
+        if (preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE) == false) {
             return false;
         }
         
-        //add entity in position
+        $offset = 0;
+        if (isset($matches[0][0][1]) && $matches[0][0][1] !== 0) {
+            $offset = $matches[0][0][1] + 1;
+        }echo $offset;
+        if (!$text->inPosition($content, $offset, strlen($name))) {
+            return false;
+        }
         
         return true;
     }
