@@ -8,7 +8,6 @@ use Blaze\Myst\Controllers\BaseController;
 use Blaze\Myst\Controllers\TextController;
 use Blaze\Myst\Exceptions\StackException;
 use Blaze\Myst\Helpers\Arr;
-use Blaze\Myst\Helpers\Str;
 
 class TextsStack extends BaseStack
 {
