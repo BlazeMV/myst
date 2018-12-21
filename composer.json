@@ -25,7 +25,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Blaze\\Myst\\Support\\Laravel\\MystServiceProvider"
+                "Blaze\\Myst\\Laravel\\MystServiceProvider"
             ]
         }
     }
