@@ -20,7 +20,7 @@ class {classname} extends TextController
     /**
      * @inheritdoc
      */
-    protected function handle($arguments)
+    protected function handle()
     {
         $this->replyWith(SendMessage::make()->text("responding to {name} message"));
     }
