@@ -51,8 +51,7 @@ trait UpdateHandler
         if (is_callable($pre_function)) {
             $process = $pre_function($update);
         }
-        
-        if ($process) {
+        if ($process !== false) {
             $this->processControllers($update);
         }
         
