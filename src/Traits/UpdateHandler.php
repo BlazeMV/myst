@@ -46,11 +46,15 @@ trait UpdateHandler
             }
         }
         
+        $process = true;
+        
         if (is_callable($pre_function)) {
-            $pre_function($update);
+            $process = $pre_function($update);
         }
         
-        $this->processControllers($update);
+        if ($process) {
+            $this->processControllers($update);
+        }
         
         return $update;
     }
