@@ -188,8 +188,8 @@ abstract class BaseRequest
         
         $this->prepareRequest();
         $response = $this->http_service->post(
-            ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/',
-            $this->getParams(),
+            $this->getUrl(),
+            $this->getOptions(),
             $this->isAsync(),
             $async_function
         );
@@ -204,7 +204,7 @@ abstract class BaseRequest
     /**
      * @return $this
      */
-    private function prepareRequest()
+    protected function prepareRequest()
     {
         $this->addParam('method', $this->getMethod());
         
@@ -213,5 +213,30 @@ abstract class BaseRequest
         }
         
         return $this;
+    }
+    
+    /**
+     * @return array
+     */
+    protected function getOptions()
+    {
+        $multipart = [];
+        foreach ($this->getParams() as $key => $value) {
+            array_push($multipart, [
+                'name' => $key,
+                'contents' => $value
+            ]);
+        }
+        return [
+            'multipart' => $multipart
+        ];
+    }
+    
+    /**
+     * @return string
+     */
+    protected function getUrl()
+    {
+        return ConfigService::getTelegramApiUrl() . $this->getBot()->getConfig('token') . '/' . $this->getMethod();
     }
 }
