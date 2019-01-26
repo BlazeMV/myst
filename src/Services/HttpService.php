@@ -44,33 +44,34 @@ class HttpService
     
     /**
      * @param string $url
-     * @param array $data
+     * @param array $options
      * @param bool $async
      * @param callable|null $async_function
      * @return Response
      */
-    public function post($url, array $data, $async = false, callable $async_function = null)
+    public function post($url, array $options, $async = false, callable $async_function = null)
     {
-        return $this->makeRequest('POST', $url, $data, $async, $async_function);
+        return $this->makeRequest('POST', $url, $options, $async, $async_function);
     }
     
     /**
      * @param string $method
      * @param string $url
-     * @param array|null $body
+     * @param array|null $options
      * @param bool $async
      * @param callable|null $async_function
      * @return Response
      */
-    private function makeRequest($method, $url, array $body = null, $async = false, callable $async_function = null)
+    private function makeRequest($method, $url, array $options = null, $async = false, callable $async_function = null)
     {
         $curlMultiHandle = new CurlMultiHandler();
-        $options = [
-            'headers'       => $this->headers,
-            'form_params'   => $body,
-            'synchronous'   => !$async,
-            'handler'       => $curlMultiHandle
-        ];
+        if (isset($options['headers'])) {
+            $options['headers'] = array_merge($this->headers, $options['headers']);
+        } else {
+            $options['headers'] = $this->headers;
+        }
+        $options['synchronous'] = $options['synchronous'] ?? !$async;
+        $options['handler'] = $curlMultiHandle;
         
         $promise = $this->client->requestAsync($method, $url, $options);
         $response = null;
