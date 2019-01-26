@@ -36,7 +36,7 @@ class SendDocument extends BaseRequest
         if (filter_var(filter_var($audio, FILTER_SANITIZE_URL), FILTER_VALIDATE_URL) !== false) {
             $audio = fopen($audio, 'r');
         }
-        $this->params['audio'] = $audio;
+        $this->params['document'] = $audio;
         return $this;
     }
     
