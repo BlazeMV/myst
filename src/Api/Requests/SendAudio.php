@@ -6,7 +6,7 @@ use Blaze\Myst\Api\Objects\Message;
 use Blaze\Myst\Api\Requests\Markup\ForceReply;
 use Blaze\Myst\Api\Requests\Markup\Keyboard;
 
-class SendPhoto extends BaseRequest
+class SendAudio extends BaseRequest
 {
     /**
      * @return string
@@ -27,16 +27,16 @@ class SendPhoto extends BaseRequest
     }
     
     /**
-     * @param $photo
+     * @param $audio
      * @return $this
      */
-    public function photo($photo)
+    public function audio($audio)
     {
         // Validate url
-        if (filter_var(filter_var($photo, FILTER_SANITIZE_URL), FILTER_VALIDATE_URL) !== false) {
-            $photo = fopen($photo, 'r');
+        if (filter_var(filter_var($audio, FILTER_SANITIZE_URL), FILTER_VALIDATE_URL) !== false) {
+            $audio = fopen($audio, 'r');
         }
-        $this->params['photo'] = $photo;
+        $this->params['audio'] = $audio;
         return $this;
     }
     
@@ -65,6 +65,50 @@ class SendPhoto extends BaseRequest
     public function parseHTML()
     {
         $this->params['parse_mode'] = 'HTML';
+        return $this;
+    }
+    
+    /**
+     * @param int $duration
+     * @return $this
+     */
+    public function duration(int $duration)
+    {
+        $this->params['duration'] = $duration;
+        return $this;
+    }
+    
+    /**
+     * @param string $performer
+     * @return $this
+     */
+    public function performer(string $performer)
+    {
+        $this->params['performer'] = $performer;
+        return $this;
+    }
+    
+    /**
+     * @param string $title
+     * @return $this
+     */
+    public function title(string $title)
+    {
+        $this->params['title'] = $title;
+        return $this;
+    }
+    
+    /**
+     * @param $thumb
+     * @return $this
+     */
+    public function thumb($thumb)
+    {
+        // Validate url
+        if (filter_var(filter_var($thumb, FILTER_SANITIZE_URL), FILTER_VALIDATE_URL) !== false) {
+            $thumb = fopen($thumb, 'r');
+        }
+        $this->params['thumb'] = $thumb;
         return $this;
     }
     
