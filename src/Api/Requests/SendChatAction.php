@@ -8,7 +8,7 @@ class SendChatAction extends BaseRequest
 {
     protected function responseObject() : string
     {
-        return User::class;
+        return 'bool';
     }
     
     /**
