@@ -3,6 +3,7 @@
 namespace Blaze\Myst\Laravel;
 
 use Blaze\Myst\BotsManager;
+use Blaze\Myst\Laravel\Commands\MystWebhook;
 use Blaze\Myst\Services\ConfigService;
 use Blaze\Myst\Laravel\Commands\MystCallbackQuery;
 use Blaze\Myst\Laravel\Commands\MystCommand;
@@ -39,6 +40,7 @@ class MystServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
+                MystWebhook::class,
                 MystCommand::class,
                 MystCallbackQuery::class,
                 MystConversation::class,
@@ -54,6 +56,7 @@ class MystServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        
         $this->app->singleton('Blaze\Myst\Bot', function () {
             $config = config('myst');
             $manager = new BotsManager($config);
