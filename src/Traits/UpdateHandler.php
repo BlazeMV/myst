@@ -31,31 +31,38 @@ trait UpdateHandler
     
     /**
      * @param callable|null $pre_function
-     * @return Update
-     * @throws MystException
+     * @return Update|\Throwable
+     * @throws \Throwable
      */
     public function handleUpdate(callable $pre_function = null)
     {
-        $update = $this->getWebhookUpdate();
+        try {
+            $update = $this->getWebhookUpdate();
     
-        if (ConfigService::shouldMaintainDatabase()) {
-            $this->updateDatabase($update);
-            
-            if ($this->hasRestrictions($update)) {
-                return $update;
+            if (ConfigService::shouldMaintainDatabase()) {
+                $this->updateDatabase($update);
+        
+                if ($this->hasRestrictions($update)) {
+                    return $update;
+                }
             }
+    
+            $process = true;
+    
+            if (is_callable($pre_function)) {
+                $process = $pre_function($update);
+            }
+            if ($process !== false) {
+                $this->processControllers($update);
+            }
+    
+            return $update;
+        } catch (\Throwable $throwable) {
+            if (ConfigService::shouldThrowException()) {
+                throw $throwable;
+            }
+            return $throwable;
         }
-        
-        $process = true;
-        
-        if (is_callable($pre_function)) {
-            $process = $pre_function($update);
-        }
-        if ($process !== false) {
-            $this->processControllers($update);
-        }
-        
-        return $update;
     }
     
     

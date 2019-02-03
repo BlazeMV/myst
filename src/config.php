@@ -46,6 +46,12 @@ return [
             ]
         ]
     ],
+    
     'maintain_db' => true,
-    'db_connection' => env('MYST_DB_CONNECTION', env('DB_CONNECTION', 'mysql'))
+    
+    'db_connection' => env('MYST_DB_CONNECTION', env('DB_CONNECTION', 'mysql')),
+    
+    'throw_exceptions' => false,
+    
+    'webhook_url_key' => env('MYST_WEBHOOK_URL_KEY', 'myst')
 ];

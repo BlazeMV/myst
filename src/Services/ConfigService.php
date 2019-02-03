@@ -46,13 +46,33 @@ class ConfigService
     }
     
     /**
-     *  whether database functions be maintained by the package
+     * whether database functions be maintained by the package
      *
      * @return \Illuminate\Config\Repository|mixed
      */
     public static function shouldMaintainDatabase()
     {
         return config('myst.maintain_db');
+    }
+    
+    /**
+     * whether the handleUpdate method should throw exceptions or not.
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    public static function shouldThrowException()
+    {
+        return config('myst.throw_exceptions');
+    }
+    
+    /**
+     * whether the handleUpdate method should throw exceptions or not.
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
+    public static function getWebhookUrlKey()
+    {
+        return config('myst.webhook_url_key');
     }
     
     /**
