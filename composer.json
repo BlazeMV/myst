@@ -2,6 +2,7 @@
 	"name": "blaze/myst",
 	"description": "Telegram Bots PHP SDK",
 	"type": "library",
+    "license": "MIT",
 	"authors": [
 		{
 			"name": "Adam Dawood",
