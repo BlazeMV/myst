@@ -3,6 +3,15 @@
 	"description": "Telegram Bots PHP SDK",
 	"type": "library",
     "license": "MIT",
+    "keywords": [
+        "bot",
+        "php",
+        "laravel",
+        "telegram",
+        "telegram bot",
+        "telegram sdk",
+        "telegram bot api sdk"
+    ],
 	"authors": [
 		{
 			"name": "Adam Dawood",
